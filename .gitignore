@@ -1,0 +1,6 @@
+# Ignoriši binarne fajlove
+*.o
+*.out
+
+# Ignoriši izlazne fajlove osim onih koje želiš
+massif.out.*
