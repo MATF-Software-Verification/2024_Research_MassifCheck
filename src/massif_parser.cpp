@@ -4,7 +4,7 @@
 #include <regex>
 #include <map>
 #include <vector>
-
+#include <cmath>
 
 struct Snapshot{
 	int snapshot;
@@ -62,6 +62,55 @@ std::pair<std::map<std::string, std::string>, std::vector<Snapshot>>parseMassifF
 }
 
 
+void detectMemoryLeaks(const std::vector<Snapshot>& snapshots) {
+    const double MEMORY_JUMP_TRESHOLD = 0.5; // 50% - prag za nagli skok
+    const double LARGE_MEMORY_TRESHOLD = 1000000000; // 1GB - prag za veliku memoriju
+
+    Snapshot previousSnapshot;
+
+    for(size_t i = 0; i < snapshots.size(); i++){
+
+        const auto& snap = snapshots[i];
+
+        if(previousSnapshot.snapshot>=0){
+            double heapJump = std::abs(static_cast<double> (snap.mem_heap_B - previousSnapshot.mem_heap_B)/previousSnapshot.mem_heap_B);
+            double stackJump = std::abs(static_cast<double> (snap.mem_stacks_B - previousSnapshot.mem_stacks_B )/previousSnapshot.mem_stacks_B);
+
+            if(heapJump > MEMORY_JUMP_TRESHOLD){
+                std::cout << "Info: Heap memory jump between snapshot " 
+                    << previousSnapshot.snapshot
+                    << " and snapshot "
+                    << snap.snapshot
+                    << " is " << heapJump*100 << "%\n" ;
+            }
+
+            if(stackJump > MEMORY_JUMP_TRESHOLD){
+                std::cout << "Info: Stack memory jump between snapshot " 
+                    << previousSnapshot.snapshot
+                    << " and snapshpt "
+                    << snap.snapshot
+                    << " is " << stackJump*100 << "%\n";
+            }
+        }
+        
+        const long BYTES_TO_MB = 1024 * 1024;
+
+        if(snap.mem_heap_B > LARGE_MEMORY_TRESHOLD){
+            std::cout << "Warning: Large heap memory detected in snapshot " << snap.snapshot
+                << ": " << snap.mem_heap_B / BYTES_TO_MB << "MB\n";
+        }
+
+        if(snap.mem_heap_B > LARGE_MEMORY_TRESHOLD){
+            std::cout << "Warning: Large stack memory detected in snapshot " << snap.snapshot
+                << ": " << snap.mem_stacks_B / BYTES_TO_MB << "MB\n";
+        }
+
+        previousSnapshot = snap;        
+    }
+
+}
+
+
 
 int main(int argc, char* argv[]){
 
@@ -81,6 +130,8 @@ int main(int argc, char* argv[]){
                       << ", Extra Heap: " << snap.mem_heap_extra_B
                       << ", Stacks: " << snap.mem_stacks_B << "\n";
         }
+
+        detectMemoryLeaks(snapshots);
 
 	} catch (const std::exception &e){
 		std::cerr << "Error: " << e.what() <<"\n";
