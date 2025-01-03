@@ -73,7 +73,7 @@ int main(int argc, char* argv[]){
 	std::string file = argv[1];
 
 	try{
-		auto[header, snapshots] = parseMassifFile("../test/" + file);
+		auto[header, snapshots] = parseMassifFile(file);
 		for (const auto &snap : snapshots) {
             std::cout << "Snapshot: " << snap.snapshot
                       << ", Time: " << snap.time
@@ -85,9 +85,6 @@ int main(int argc, char* argv[]){
 	} catch (const std::exception &e){
 		std::cerr << "Error: " << e.what() <<"\n";
 	}
-
-
-
 	return 0;
 }
 

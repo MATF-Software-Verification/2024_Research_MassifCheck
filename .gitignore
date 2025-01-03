@@ -1,6 +1,8 @@
 # Ignoriši binarne fajlove
 *.o
 *.out
+massif_parser
 
 # Ignoriši izlazne fajlove osim onih koje želiš
 massif.out.*
+
