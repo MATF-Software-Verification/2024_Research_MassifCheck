@@ -25,6 +25,7 @@ std::pair<std::map<std::string, std::string>, std::vector<Snapshot>>parseMassifF
     std::vector<Snapshot> snapshots;
     std::string line;
     Snapshot snapshot;
+    bool hasSnapshot=false;
 
     std::regex headerRegex(R"((\w+):\s*(.+))");
     std::regex snapshotRegex(R"(snapshot=(\d+))");
@@ -37,11 +38,12 @@ std::pair<std::map<std::string, std::string>, std::vector<Snapshot>>parseMassifF
             header[match[1]] = match[2];
         }
         else if (std::regex_match(line, match, snapshotRegex)) {
-            if (snapshot.snapshot >= 0) {
+            if (hasSnapshot) {
                 snapshots.push_back(snapshot);
             }
             snapshot = {}; 
             snapshot.snapshot = std::stoi(match[1]);
+            hasSnapshot=true;
         }
         else if (std::regex_match(line, match, valueRegex)) {
             std::string key = match[1];
