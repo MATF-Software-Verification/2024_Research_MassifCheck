@@ -1,8 +1,6 @@
-# Ignoriši binarne fajlove
-*.o
-*.out
-massif_parser
+# Ignorisi build direktorijum
+build
 
-# Ignoriši izlazne fajlove osim onih koje želiš
+# Ignorisi izlazne fajlove osim onih koje zelis
 massif.out.*
 

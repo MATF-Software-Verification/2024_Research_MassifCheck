@@ -4,12 +4,10 @@
         {
             "label": "Build",
             "type": "shell",
-            "command": "g++",
+            "command": "bash",
             "args": [
-                "-g",
-                "${workspaceFolder}/src/massif_parser.cpp",
-                "-o",
-                "${workspaceFolder}/src/massif_parser"
+                "-c",
+                "mkdir -p ${workspaceFolder}/build && g++ -g ${workspaceFolder}/src/*.cpp -o ${workspaceFolder}/build/massif_tool"
             ],
             "group": {
                 "kind": "build",

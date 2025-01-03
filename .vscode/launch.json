@@ -6,7 +6,7 @@
 			"name": "(gdb) Launch",
 			"type": "cppdbg",
 			"request": "launch",
-			"program": "${workspaceFolder}/src/massif_parser", // Izvršni fajl
+			"program": "${workspaceFolder}/build/massif_tool", // Izvršni fajl
 			"args": ["${workspaceFolder}/test/massif.out.1"], // Putanja do massif.out.1
 			"stopAtEntry": false,
 			"cwd": "${workspaceFolder}", // Radni direktorijum
