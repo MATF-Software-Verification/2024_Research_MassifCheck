@@ -1,6 +1,7 @@
-# Ignorisi build direktorijum
-build
+#ignorisanje build/
+build/
 
-# Ignorisi izlazne fajlove osim onih koje zelis
-massif.out.*
-
+# ignorisanje test/ direktorijuma osim .c i .cpp
+test/*
+!test/*.c
+!test/*.cpp
