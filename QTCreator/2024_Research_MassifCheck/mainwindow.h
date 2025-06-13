@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "massifrunner.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -17,7 +18,13 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
+    void on_btLoadBinary_clicked();
+
+    void on_btRunAnalysis_clicked();
+
 private:
     Ui::MainWindow *ui;
+    MassifRunner *massifRunner;
 };
 #endif // MAINWINDOW_H
