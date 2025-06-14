@@ -9,6 +9,7 @@ MainWindow::MainWindow(QWidget *parent)
     , massifRunner(new MassifRunner)
 {
     ui->setupUi(this);
+    QObject::connect(this,  &MainWindow::modeValudeChanged, massifRunner, &MassifRunner::setMode);
 }
 
 MainWindow::~MainWindow()
@@ -17,7 +18,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_btLoadBinary_clicked()
+void MainWindow::on_btLoadFile_clicked()
 {
     massifRunner->selectExecutable(this);
 
@@ -34,10 +35,10 @@ void MainWindow::on_btLoadBinary_clicked()
 }
 
 
-void MainWindow::on_btRunAnalysis_clicked()
+void MainWindow::on_btExecute_clicked()
 {
     if (!ui->leBinaryFileName->text().isEmpty()){
-        massifRunner->runMassif();
+        massifRunner->runMassifCheck();
     }
 }
 

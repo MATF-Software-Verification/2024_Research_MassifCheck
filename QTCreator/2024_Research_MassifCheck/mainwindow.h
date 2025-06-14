@@ -18,10 +18,31 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-private slots:
-    void on_btLoadBinary_clicked();
+signals:
+    void modeValudeChanged(Mode mode);
 
-    void on_btRunAnalysis_clicked();
+private slots:
+    void on_btLoadFile_clicked();
+
+    void on_btExecute_clicked();
+
+    void on_rbBinary_toggled(bool checked){
+        if (checked){
+            modeValudeChanged(BINARY);
+        }
+    };
+
+    void on_rbCompile_toggled(bool checked){
+        if (checked){
+            modeValudeChanged(COMPILE);
+        }
+    };
+
+    void on_rbOuput_toggled(bool checked){
+        if (checked){
+            modeValudeChanged(OUTPUT);
+        }
+    };
 
 private:
     Ui::MainWindow *ui;

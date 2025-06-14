@@ -8,6 +8,12 @@
 #include <QCoreApplication>
 #include <QMessageBox>
 
+enum Mode{
+    COMPILE = 0,
+    BINARY = 1,
+    OUTPUT = 2
+};
+
 class MassifRunner : public QObject
 {
     Q_OBJECT
@@ -29,15 +35,22 @@ public:
     void selectExecutable(QWidget* parent);
     QString convertWindowsPathToWsl(const QString& winPath);
     QString getMassifFilesDir();
-    void runMassif();
+    void runMassifCheck();
 
 private:
+    Mode mode = COMPILE;
+
     QString fileName;
     QString filePath;
     QString program;
 
 
     QStringList args;
+
+public slots:
+    void setMode(Mode mode) {
+        this->mode = mode;
+    };
 
 signals:
 };

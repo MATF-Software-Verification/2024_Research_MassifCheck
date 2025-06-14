@@ -56,16 +56,18 @@ QString MassifRunner::getMassifFilesDir() {
     }
 }
 
-void MassifRunner::runMassif(){
-    addArg(QString::fromStdString("valgrind"));
-    addArg(QString::fromStdString("--tool=massif"));
-    QString outFile = convertWindowsPathToWsl(getMassifFilesDir() + "/massif_output.out");
-    addArg(QString::fromStdString("--massif-out-file=") + outFile);
-    addArg(convertWindowsPathToWsl(getFilePath()));
-    process->start("wsl", getArgs());
-    process->waitForFinished();
-    QMessageBox msgBox;
-    msgBox.setText("Massif finished!");
-    msgBox.exec();
+void MassifRunner::runMassifCheck(){
+    if ( mode == BINARY){
+        addArg(QString::fromStdString("valgrind"));
+        addArg(QString::fromStdString("--tool=massif"));
+        QString outFile = convertWindowsPathToWsl(getMassifFilesDir() + "/massif_output.out");
+        addArg(QString::fromStdString("--massif-out-file=") + outFile);
+        addArg(convertWindowsPathToWsl(getFilePath()));
+        process->start("wsl", getArgs());
+        process->waitForFinished();
+        QMessageBox msgBox;
+        msgBox.setText("Massif finished!");
+        msgBox.exec();
+    }
 }
 

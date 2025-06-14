@@ -6,48 +6,63 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>682</width>
-    <height>472</height>
+    <width>552</width>
+    <height>487</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="btLoadBinary">
+   <widget class="QPushButton" name="btLoadFile">
     <property name="geometry">
      <rect>
-      <x>60</x>
-      <y>180</y>
+      <x>10</x>
+      <y>140</y>
       <width>121</width>
       <height>29</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
     <property name="text">
-     <string>Load binary</string>
+     <string>Load file</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="btRunAnalysis">
+   <widget class="QPushButton" name="btExecute">
     <property name="geometry">
      <rect>
-      <x>60</x>
-      <y>230</y>
+      <x>210</x>
+      <y>360</y>
       <width>121</width>
       <height>29</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
     <property name="text">
-     <string>Run analysis</string>
+     <string>Execute</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="leBinaryFileName">
     <property name="geometry">
      <rect>
-      <x>230</x>
-      <y>180</y>
+      <x>140</x>
+      <y>100</y>
       <width>391</width>
       <height>28</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
     </property>
     <property name="alignment">
      <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -56,8 +71,110 @@
      <bool>true</bool>
     </property>
     <property name="placeholderText">
-     <string>Please load a binary file</string>
+     <string>Please choose a file to load</string>
     </property>
+   </widget>
+   <widget class="QLabel" name="lbHeader">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>30</y>
+      <width>541</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>18</pointsize>
+     </font>
+    </property>
+    <property name="layoutDirection">
+     <enum>Qt::LayoutDirection::LeftToRight</enum>
+    </property>
+    <property name="text">
+     <string>2024_Research_MassifCheck</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignmentFlag::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lbSelectedFile">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>100</y>
+      <width>121</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Selected file:</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignmentFlag::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QGroupBox" name="groupBox">
+    <property name="geometry">
+     <rect>
+      <x>19</x>
+      <y>190</y>
+      <width>501</width>
+      <height>151</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="title">
+     <string>Choose action</string>
+    </property>
+    <widget class="QWidget" name="verticalLayoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>30</y>
+       <width>461</width>
+       <height>121</height>
+      </rect>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QRadioButton" name="rbCompile">
+        <property name="text">
+         <string>Compile C++ source file and run massif</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="rbBinary">
+        <property name="text">
+         <string>Load binary file and run massif</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="rbOuput">
+        <property name="text">
+         <string>Load existing massif output</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -65,7 +182,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>682</width>
+     <width>552</width>
      <height>25</height>
     </rect>
    </property>
