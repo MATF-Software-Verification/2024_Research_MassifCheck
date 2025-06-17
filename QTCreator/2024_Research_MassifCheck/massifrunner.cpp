@@ -96,16 +96,21 @@ void MassifRunner::runMassifCheck(){
         msgBox.exec();
     }
     else if ( mode == BINARY){
-        addArg(QString::fromStdString("valgrind"));
-        addArg(QString::fromStdString("--tool=massif"));
-        QString outFile = convertWindowsPathToWsl(getMassifFilesDir() + "/massif_output.out");
-        addArg(QString::fromStdString("--massif-out-file=") + outFile);
-        addArg(convertWindowsPathToWsl(getFilePath()));
-        process->start("wsl", getArgs());
-        process->waitForFinished();
-        QMessageBox msgBox;
-        msgBox.setText("Massif finished!");
-        msgBox.exec();
+        QString massifOut = convertWindowsPathToWsl(getMassifFilesDir() + "/massif_output.out");
+        QString exePath = convertWindowsPathToWsl(getFilePath());
+
+        // Komanda koja pokreće valgrind u WSL i čeka ENTER da zatvori terminal
+        QString command = QString("valgrind --tool=massif --massif-out-file=%1 %2; echo '--- Done ---'; read")
+                              .arg(massifOut, exePath);
+
+        // Using cmd.exe to open a new terminal on widows in case the .out is an interactive program
+        args.clear();
+        args << "/c" << "start" << "wsl.exe" << "-e" << "bash" << "-c" << command;
+
+        bool started = QProcess::startDetached("cmd.exe", args);
+        if (!started) {
+            QMessageBox::warning(nullptr, "Error", "Failed to launch Valgrind in terminal.");
+        }
     }
 }
 
