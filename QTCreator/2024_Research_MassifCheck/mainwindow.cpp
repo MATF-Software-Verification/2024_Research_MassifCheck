@@ -20,7 +20,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_btLoadFile_clicked()
 {
-    massifRunner->selectExecutable(this);
+    massifRunner->selectFile(this);
 
     // Just for debugging
     //QMessageBox msgBox;

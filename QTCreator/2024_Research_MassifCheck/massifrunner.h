@@ -7,6 +7,7 @@
 #include <QDir>
 #include <QCoreApplication>
 #include <QMessageBox>
+#include <QRegularExpression>
 
 enum Mode{
     COMPILE = 0,
@@ -25,15 +26,18 @@ public:
 
     inline QString getFileName() { return this->fileName; };
     inline QString getFilePath() { return this->filePath; };
-    inline QString getProgram() { return this->program; };
+
+    inline void setSourceFilePath(QString path){this->sourceFilePath = path;};
 
     inline QStringList getArgs() {return this->args; };
     inline void addArg(QString arg) { args << arg; };
 
 
 
-    void selectExecutable(QWidget* parent);
+    void selectFile(QWidget* parent);
     QString convertWindowsPathToWsl(const QString& winPath);
+    QString getDirectoryPath(QString filePath);
+    QString replaceCppWithOut(const QString fileName);
     QString getMassifFilesDir();
     void runMassifCheck();
 
@@ -42,7 +46,9 @@ private:
 
     QString fileName;
     QString filePath;
-    QString program;
+    QString outFileName;
+    QString outFilePath;
+    QString sourceFilePath;
 
 
     QStringList args;

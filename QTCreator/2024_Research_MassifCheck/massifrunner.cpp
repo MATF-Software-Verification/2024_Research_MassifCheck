@@ -1,4 +1,5 @@
 #include "massifrunner.h"
+#include <string>
 
 MassifRunner::MassifRunner(QObject *parent)
     : QObject{parent}
@@ -9,16 +10,26 @@ MassifRunner::~MassifRunner(){
     delete process;
 }
 
-// A function that display a file dialog in the parent widget, with a starting point at home path that allows only
-// executable files to be chosen
-void MassifRunner::selectExecutable(QWidget* parent){
+
+void MassifRunner::selectFile(QWidget* parent){
+    std::string description;
+    std::string fileType;
+    if ( mode == COMPILE){
+        description = "Open Source File";
+        fileType = "C++ Files (*.cpp)";
+    }
+    else if ( mode == BINARY){
+        description = "Open Binary File";
+        fileType = "Executable Files (*)";
+    }
+
     filePath = QFileDialog::getOpenFileName(parent,
-                                            tr("Open Binary File"),
+                                            tr(description.c_str()),
                                             QDir::homePath(),
-                                            tr("Executable Files (*)"));
+                                            tr(fileType.c_str()));
     fileName = filePath.split('\/').takeLast();
-    //need to add --massif-out-file and other arguments to the profiling
-    program = QString::fromStdString("wsl valgrind --tool=massif ./") + fileName;
+    outFileName = replaceCppWithOut(fileName);
+    outFilePath = getDirectoryPath(filePath);
 }
 
 QString MassifRunner::convertWindowsPathToWsl(const QString& winPath) {
@@ -41,7 +52,6 @@ QString MassifRunner::getMassifFilesDir() {
     // Start from the directory where the executable is
     QDir dir(QCoreApplication::applicationDirPath());
 
-    // Go up 3 levels: from /build/Desktop_Qt... → /QTCreator → /2024_Research_MassifCheck
     dir.cdUp();
     dir.cdUp();
     dir.cdUp();
@@ -56,8 +66,36 @@ QString MassifRunner::getMassifFilesDir() {
     }
 }
 
+QString MassifRunner::replaceCppWithOut(const QString fileName) {
+    if (fileName.endsWith(".cpp", Qt::CaseInsensitive)) {
+        return fileName.left(fileName.length() - 4) + ".out";
+    }
+    return fileName + ".out";
+}
+
+QString MassifRunner::getDirectoryPath(QString filePath){
+    int lastSlash = filePath.lastIndexOf(fileName);
+
+    if (lastSlash != -1) {
+        return filePath.left(lastSlash);
+    }
+    return QString();
+}
+
 void MassifRunner::runMassifCheck(){
-    if ( mode == BINARY){
+    if ( mode == COMPILE ){
+        addArg(QString::fromStdString("g++"));
+        addArg(QString::fromStdString("-g"));
+        addArg(convertWindowsPathToWsl(getFilePath()));
+        addArg(QString::fromStdString("-o"));
+        addArg(convertWindowsPathToWsl(outFilePath + outFileName));
+        process->start("wsl", getArgs());
+        process->waitForFinished();
+        QMessageBox msgBox;
+        msgBox.setText("Compile finished!");
+        msgBox.exec();
+    }
+    else if ( mode == BINARY){
         addArg(QString::fromStdString("valgrind"));
         addArg(QString::fromStdString("--tool=massif"));
         QString outFile = convertWindowsPathToWsl(getMassifFilesDir() + "/massif_output.out");
