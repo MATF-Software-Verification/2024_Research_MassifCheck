@@ -47,6 +47,7 @@ private:
 
 
     QStringList args;
+    void runMassifOutputAnalysis();
 
 public slots:
     void setMode(Mode mode) {

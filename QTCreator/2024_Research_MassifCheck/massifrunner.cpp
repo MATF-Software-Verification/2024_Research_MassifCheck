@@ -1,5 +1,8 @@
 #include "massifrunner.h"
 #include <string>
+#include "parser.h"
+#include "massifanalyzer.h"
+#include <QDebug>
 
 MassifRunner::MassifRunner(QObject *parent)
     : QObject{parent}
@@ -21,6 +24,10 @@ void MassifRunner::selectFile(QWidget* parent){
     else if ( mode == BINARY){
         description = "Open Binary File";
         fileType = "Executable Files (*)";
+    }
+    else if (mode == OUTPUT) {
+        runMassifOutputAnalysis();
+        return;
     }
 
     filePath = QFileDialog::getOpenFileName(parent,
@@ -115,3 +122,27 @@ void MassifRunner::runMassifCheck(){
     }
 }
 
+void MassifRunner::runMassifOutputAnalysis() {
+    QString massifFilePath = QFileDialog::getOpenFileName(nullptr,
+                                                          tr("Select Massif Output File"),
+                                                          QDir::homePath(),
+                                                          tr("Massif Output Files (massif.out.*)"));
+
+    if (massifFilePath.isEmpty()) {
+        QMessageBox::warning(nullptr, "Warning", "No file selected.");
+        return;
+    }
+
+    Parser parser;
+    auto [header, snapshots] = parser.parseMassifFile(massifFilePath);
+
+    if (snapshots.isEmpty()) {
+        QMessageBox::warning(nullptr, "Error", "No snapshots found in the file.");
+        return;
+    }
+
+    MassifAnalyzer analyzer;
+    analyzer.detectMemoryLeaks(snapshots);
+
+    QMessageBox::information(nullptr, "Analysis", "Memory analysis completed. Check application output.");
+}
