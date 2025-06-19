@@ -25,6 +25,10 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         ${PROJECT_SOURCES}
         massifrunner.h massifrunner.cpp
         ModeEnum.h
+        massifanalyzer.h massifanalyzer.cpp
+
+        Snapshot.h
+        Parser.h Parser.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET 2024_Research_MassifCheck APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
