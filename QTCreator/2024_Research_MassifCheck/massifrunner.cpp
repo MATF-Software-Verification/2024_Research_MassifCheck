@@ -83,6 +83,7 @@ QString MassifRunner::getDirectoryPath(QString filePath){
 }
 
 void MassifRunner::runMassifCheck(){
+    args.clear();
     if ( mode == COMPILE ){
         addArg(QString::fromStdString("g++"));
         addArg(QString::fromStdString("-g"));

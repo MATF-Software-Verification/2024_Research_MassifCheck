@@ -8,12 +8,7 @@
 #include <QCoreApplication>
 #include <QMessageBox>
 #include <QRegularExpression>
-
-enum Mode{
-    COMPILE = 0,
-    BINARY = 1,
-    OUTPUT = 2
-};
+#include "ModeEnum.h"
 
 class MassifRunner : public QObject
 {
