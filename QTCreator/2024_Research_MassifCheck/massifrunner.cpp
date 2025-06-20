@@ -104,7 +104,7 @@ void MassifRunner::runMassifCheck(){
         msgBox.exec();
     }
     else if ( mode == BINARY){
-        QString massifOut = convertWindowsPathToWsl(getMassifFilesDir() + "/massif_output.out");
+        QString massifOut = convertWindowsPathToWsl(getNextMassifOutFilePath());
         QString exePath = convertWindowsPathToWsl(getFilePath());
 
         // Komanda koja pokreće valgrind u WSL i čeka ENTER da zatvori terminal
@@ -145,4 +145,27 @@ void MassifRunner::runMassifOutputAnalysis() {
     analyzer.detectMemoryLeaks(snapshots);
 
     QMessageBox::information(nullptr, "Analysis", "Memory analysis completed. Check application output.");
+}
+
+QString MassifRunner::getNextMassifOutFilePath() {
+    QString massifDir = getMassifFilesDir();
+    QDir dir(massifDir);
+    QStringList files = dir.entryList(QStringList() << "massif.out.*", QDir::Files);
+
+    int maxIndex = -1;
+    QRegularExpression regex(R"(massif\.out\.(\d+))");
+
+    for (const QString& file : files) {
+        QRegularExpressionMatch match = regex.match(file);
+        if (match.hasMatch()) {
+            int index = match.captured(1).toInt();
+            if (index > maxIndex) {
+                maxIndex = index;
+            }
+        }
+    }
+
+    int nextIndex = maxIndex + 1;
+    QString fileName = QString("massif.out.%1").arg(nextIndex);
+    return getMassifFilesDir() + "/" + fileName;
 }

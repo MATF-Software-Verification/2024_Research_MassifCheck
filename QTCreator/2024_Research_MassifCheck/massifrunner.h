@@ -35,6 +35,7 @@ public:
     QString replaceCppWithOut(const QString fileName);
     QString getMassifFilesDir();
     void runMassifCheck();
+    QString getNextMassifOutFilePath();
 
 private:
     Mode mode = COMPILE;
