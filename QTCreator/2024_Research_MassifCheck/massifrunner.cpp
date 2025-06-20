@@ -26,17 +26,22 @@ void MassifRunner::selectFile(QWidget* parent){
         fileType = "Executable Files (*)";
     }
     else if (mode == OUTPUT) {
-        runMassifOutputAnalysis();
-        return;
+        description = "Select Massif Output File";
+        fileType = "Massif Output Files (massif.out.*)";
     }
 
     filePath = QFileDialog::getOpenFileName(parent,
                                             tr(description.c_str()),
                                             QDir::homePath(),
                                             tr(fileType.c_str()));
-    fileName = filePath.split('\/').takeLast();
-    outFileName = replaceCppWithOut(fileName);
-    outFilePath = getDirectoryPath(filePath);
+
+    fileName = QFileInfo(filePath).fileName();
+
+    if ( mode == COMPILE){
+        outFileName = replaceCppWithOut(fileName);
+        outFilePath = getDirectoryPath(filePath);
+    }
+
 }
 
 QString MassifRunner::convertWindowsPathToWsl(const QString& winPath) {
@@ -91,6 +96,7 @@ QString MassifRunner::getDirectoryPath(QString filePath){
 
 void MassifRunner::runMassifCheck(){
     args.clear();
+
     if ( mode == COMPILE ){
         addArg(QString::fromStdString("g++"));
         addArg(QString::fromStdString("-g"));
@@ -120,21 +126,14 @@ void MassifRunner::runMassifCheck(){
             QMessageBox::warning(nullptr, "Error", "Failed to launch Valgrind in terminal.");
         }
     }
+    else if ( mode == OUTPUT){
+        runMassifOutputAnalysis();
+    }
 }
 
 void MassifRunner::runMassifOutputAnalysis() {
-    QString massifFilePath = QFileDialog::getOpenFileName(nullptr,
-                                                          tr("Select Massif Output File"),
-                                                          QDir::homePath(),
-                                                          tr("Massif Output Files (massif.out.*)"));
-
-    if (massifFilePath.isEmpty()) {
-        QMessageBox::warning(nullptr, "Warning", "No file selected.");
-        return;
-    }
-
     Parser parser;
-    auto [header, snapshots] = parser.parseMassifFile(massifFilePath);
+    auto [header, snapshots] = parser.parseMassifFile(filePath);
 
     if (snapshots.isEmpty()) {
         QMessageBox::warning(nullptr, "Error", "No snapshots found in the file.");
@@ -168,4 +167,11 @@ QString MassifRunner::getNextMassifOutFilePath() {
     int nextIndex = maxIndex + 1;
     QString fileName = QString("massif.out.%1").arg(nextIndex);
     return getMassifFilesDir() + "/" + fileName;
+}
+
+void MassifRunner::clearFileSelection(){
+    fileName.clear();
+    filePath.clear();
+    outFileName.clear();
+    outFilePath.clear();
 }

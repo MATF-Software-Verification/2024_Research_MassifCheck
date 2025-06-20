@@ -50,7 +50,7 @@
      <string>Execute</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="leBinaryFileName">
+   <widget class="QLineEdit" name="leFileName">
     <property name="geometry">
      <rect>
       <x>140</x>
@@ -167,7 +167,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QRadioButton" name="rbOuput">
+       <widget class="QRadioButton" name="rbOutput">
         <property name="text">
          <string>Load existing massif output</string>
         </property>

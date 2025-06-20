@@ -22,8 +22,6 @@ public:
     inline QString getFileName() { return this->fileName; };
     inline QString getFilePath() { return this->filePath; };
 
-    inline void setSourceFilePath(QString path){this->sourceFilePath = path;};
-
     inline QStringList getArgs() {return this->args; };
     inline void addArg(QString arg) { args << arg; };
 
@@ -36,6 +34,7 @@ public:
     QString getMassifFilesDir();
     void runMassifCheck();
     QString getNextMassifOutFilePath();
+    void clearFileSelection();
 
 private:
     Mode mode = COMPILE;
@@ -44,7 +43,6 @@ private:
     QString filePath;
     QString outFileName;
     QString outFilePath;
-    QString sourceFilePath;
 
 
     QStringList args;
@@ -53,6 +51,7 @@ private:
 public slots:
     void setMode(Mode mode) {
         this->mode = mode;
+        clearFileSelection();
     };
 
 signals:

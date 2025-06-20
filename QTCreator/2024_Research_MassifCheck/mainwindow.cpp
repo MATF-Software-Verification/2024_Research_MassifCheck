@@ -31,14 +31,36 @@ void MainWindow::on_btLoadFile_clicked()
     //                "\n " + massifRunner->convertWindowsPathToWsl(massifRunner->getMassifFilesDir()));
     // msgBox.exec();
 
-    this->ui->leBinaryFileName->setText(massifRunner->getFileName());
+    this->ui->leFileName->setText(massifRunner->getFileName());
 }
 
+void MainWindow::on_rbCompile_toggled(bool checked){
+    if (checked){
+        modeValudeChanged(COMPILE);
+        this->ui->leFileName->clear();
+    }
+};
+
+void MainWindow::on_rbBinary_toggled(bool checked){
+    if (checked){
+        modeValudeChanged(BINARY);
+        this->ui->leFileName->clear();
+    }
+};
+
+void MainWindow::on_rbOutput_toggled(bool checked){
+    if (checked){
+        modeValudeChanged(OUTPUT);
+        this->ui->leFileName->clear();
+    }
+};
 
 void MainWindow::on_btExecute_clicked()
 {
-    if (!ui->leBinaryFileName->text().isEmpty()){
-        massifRunner->runMassifCheck();
+    if (massifRunner->getFilePath().isEmpty() || ui->leFileName->text().isEmpty()) {
+        QMessageBox::warning(nullptr, "Warning", "No file selected.");
+        return;
     }
+    massifRunner->runMassifCheck();
 }
 
