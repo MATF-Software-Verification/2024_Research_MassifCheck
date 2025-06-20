@@ -5,3 +5,5 @@ build/
 test/*
 !test/*.c
 !test/*.cpp
+
+CMakeLists.txt.user

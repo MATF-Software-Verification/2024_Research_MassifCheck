@@ -1,5 +1,8 @@
 #include "massifrunner.h"
 #include <string>
+#include "parser.h"
+#include "massifanalyzer.h"
+#include <QDebug>
 
 MassifRunner::MassifRunner(QObject *parent)
     : QObject{parent}
@@ -22,14 +25,23 @@ void MassifRunner::selectFile(QWidget* parent){
         description = "Open Binary File";
         fileType = "Executable Files (*)";
     }
+    else if (mode == OUTPUT) {
+        description = "Select Massif Output File";
+        fileType = "Massif Output Files (massif.out.*)";
+    }
 
     filePath = QFileDialog::getOpenFileName(parent,
                                             tr(description.c_str()),
                                             QDir::homePath(),
                                             tr(fileType.c_str()));
-    fileName = filePath.split('\/').takeLast();
-    outFileName = replaceCppWithOut(fileName);
-    outFilePath = getDirectoryPath(filePath);
+
+    fileName = QFileInfo(filePath).fileName();
+
+    if ( mode == COMPILE){
+        outFileName = replaceCppWithOut(fileName);
+        outFilePath = getDirectoryPath(filePath);
+    }
+
 }
 
 QString MassifRunner::convertWindowsPathToWsl(const QString& winPath) {
@@ -84,6 +96,7 @@ QString MassifRunner::getDirectoryPath(QString filePath){
 
 void MassifRunner::runMassifCheck(){
     args.clear();
+
     if ( mode == COMPILE ){
         addArg(QString::fromStdString("g++"));
         addArg(QString::fromStdString("-g"));
@@ -97,7 +110,7 @@ void MassifRunner::runMassifCheck(){
         msgBox.exec();
     }
     else if ( mode == BINARY){
-        QString massifOut = convertWindowsPathToWsl(getMassifFilesDir() + "/massif_output.out");
+        QString massifOut = convertWindowsPathToWsl(getNextMassifOutFilePath());
         QString exePath = convertWindowsPathToWsl(getFilePath());
 
         // Komanda koja pokreće valgrind u WSL i čeka ENTER da zatvori terminal
@@ -113,5 +126,52 @@ void MassifRunner::runMassifCheck(){
             QMessageBox::warning(nullptr, "Error", "Failed to launch Valgrind in terminal.");
         }
     }
+    else if ( mode == OUTPUT){
+        runMassifOutputAnalysis();
+    }
 }
 
+void MassifRunner::runMassifOutputAnalysis() {
+    Parser parser;
+    auto [header, snapshots] = parser.parseMassifFile(filePath);
+
+    if (snapshots.isEmpty()) {
+        QMessageBox::warning(nullptr, "Error", "No snapshots found in the file.");
+        return;
+    }
+
+    MassifAnalyzer analyzer;
+    analyzer.detectMemoryLeaks(snapshots);
+
+    QMessageBox::information(nullptr, "Analysis", "Memory analysis completed. Check application output.");
+}
+
+QString MassifRunner::getNextMassifOutFilePath() {
+    QString massifDir = getMassifFilesDir();
+    QDir dir(massifDir);
+    QStringList files = dir.entryList(QStringList() << "massif.out.*", QDir::Files);
+
+    int maxIndex = -1;
+    QRegularExpression regex(R"(massif\.out\.(\d+))");
+
+    for (const QString& file : files) {
+        QRegularExpressionMatch match = regex.match(file);
+        if (match.hasMatch()) {
+            int index = match.captured(1).toInt();
+            if (index > maxIndex) {
+                maxIndex = index;
+            }
+        }
+    }
+
+    int nextIndex = maxIndex + 1;
+    QString fileName = QString("massif.out.%1").arg(nextIndex);
+    return getMassifFilesDir() + "/" + fileName;
+}
+
+void MassifRunner::clearFileSelection(){
+    fileName.clear();
+    filePath.clear();
+    outFileName.clear();
+    outFilePath.clear();
+}

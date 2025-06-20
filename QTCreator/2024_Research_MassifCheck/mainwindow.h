@@ -23,26 +23,10 @@ signals:
 
 private slots:
     void on_btLoadFile_clicked();
-
     void on_btExecute_clicked();
-
-    void on_rbBinary_toggled(bool checked){
-        if (checked){
-            modeValudeChanged(BINARY);
-        }
-    };
-
-    void on_rbCompile_toggled(bool checked){
-        if (checked){
-            modeValudeChanged(COMPILE);
-        }
-    };
-
-    void on_rbOuput_toggled(bool checked){
-        if (checked){
-            modeValudeChanged(OUTPUT);
-        }
-    };
+    void on_rbCompile_toggled(bool checked);
+    void on_rbBinary_toggled(bool checked);
+    void on_rbOutput_toggled(bool checked);
 
 private:
     Ui::MainWindow *ui;
