@@ -1,7 +1,5 @@
 #include "massifrunner.h"
 #include <string>
-#include "parser.h"
-#include "massifanalyzer.h"
 #include <QDebug>
 
 MassifRunner::MassifRunner(QObject *parent)
@@ -11,37 +9,6 @@ MassifRunner::MassifRunner(QObject *parent)
 
 MassifRunner::~MassifRunner(){
     delete process;
-}
-
-
-void MassifRunner::selectFile(QWidget* parent){
-    std::string description;
-    std::string fileType;
-    if ( mode == COMPILE){
-        description = "Open Source File";
-        fileType = "C++ Files (*.cpp)";
-    }
-    else if ( mode == BINARY){
-        description = "Open Binary File";
-        fileType = "Executable Files (*)";
-    }
-    else if (mode == OUTPUT) {
-        description = "Select Massif Output File";
-        fileType = "Massif Output Files (massif.out.*)";
-    }
-
-    filePath = QFileDialog::getOpenFileName(parent,
-                                            tr(description.c_str()),
-                                            QDir::homePath(),
-                                            tr(fileType.c_str()));
-
-    fileName = QFileInfo(filePath).fileName();
-
-    if ( mode == COMPILE){
-        outFileName = replaceCppWithOut(fileName);
-        outFilePath = getDirectoryPath(filePath);
-    }
-
 }
 
 QString MassifRunner::convertWindowsPathToWsl(const QString& winPath) {
@@ -78,31 +45,15 @@ QString MassifRunner::getMassifFilesDir() {
     }
 }
 
-QString MassifRunner::replaceCppWithOut(const QString fileName) {
-    if (fileName.endsWith(".cpp", Qt::CaseInsensitive)) {
-        return fileName.left(fileName.length() - 4) + ".out";
-    }
-    return fileName + ".out";
-}
-
-QString MassifRunner::getDirectoryPath(QString filePath){
-    int lastSlash = filePath.lastIndexOf(fileName);
-
-    if (lastSlash != -1) {
-        return filePath.left(lastSlash);
-    }
-    return QString();
-}
-
-void MassifRunner::runMassifCheck(){
+void MassifRunner::runMassifCheck(FileSelector& fileSelector, Mode mode){
     args.clear();
 
     if ( mode == COMPILE ){
         addArg(QString::fromStdString("g++"));
         addArg(QString::fromStdString("-g"));
-        addArg(convertWindowsPathToWsl(getFilePath()));
+        addArg(convertWindowsPathToWsl(fileSelector.getFilePath()));
         addArg(QString::fromStdString("-o"));
-        addArg(convertWindowsPathToWsl(outFilePath + outFileName));
+        addArg(convertWindowsPathToWsl(fileSelector.getOutFilePath() + fileSelector.getOutFileName()));
         process->start("wsl", getArgs());
         process->waitForFinished();
         QMessageBox msgBox;
@@ -111,7 +62,7 @@ void MassifRunner::runMassifCheck(){
     }
     else if ( mode == BINARY){
         QString massifOut = convertWindowsPathToWsl(getNextMassifOutFilePath());
-        QString exePath = convertWindowsPathToWsl(getFilePath());
+        QString exePath = convertWindowsPathToWsl(fileSelector.getFilePath());
 
         // Komanda koja pokreće valgrind u WSL i čeka ENTER da zatvori terminal
         QString command = QString("valgrind --tool=massif --massif-out-file=%1 %2; echo '--- Done ---'; read")
@@ -127,13 +78,13 @@ void MassifRunner::runMassifCheck(){
         }
     }
     else if ( mode == OUTPUT){
-        runMassifOutputAnalysis();
+        runMassifOutputAnalysis(fileSelector);
     }
 }
 
-void MassifRunner::runMassifOutputAnalysis() {
+void MassifRunner::runMassifOutputAnalysis(FileSelector& fileSelector) {
     Parser parser;
-    auto [header, snapshots] = parser.parseMassifFile(filePath);
+    auto [header, snapshots] = parser.parseMassifFile(fileSelector.getFilePath());
 
     if (snapshots.isEmpty()) {
         QMessageBox::warning(nullptr, "Error", "No snapshots found in the file.");
@@ -167,11 +118,4 @@ QString MassifRunner::getNextMassifOutFilePath() {
     int nextIndex = maxIndex + 1;
     QString fileName = QString("massif.out.%1").arg(nextIndex);
     return getMassifFilesDir() + "/" + fileName;
-}
-
-void MassifRunner::clearFileSelection(){
-    fileName.clear();
-    filePath.clear();
-    outFileName.clear();
-    outFilePath.clear();
 }

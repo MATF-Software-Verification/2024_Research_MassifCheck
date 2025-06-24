@@ -1,4 +1,4 @@
-# Test Direktorijum
+# Test Directory
 
 ## Naming Rules for Massif Output Files
 

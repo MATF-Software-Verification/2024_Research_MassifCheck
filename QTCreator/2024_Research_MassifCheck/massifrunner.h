@@ -9,6 +9,9 @@
 #include <QMessageBox>
 #include <QRegularExpression>
 #include "ModeEnum.h"
+#include "Parser.h"
+#include "fileselector.h"
+#include "massifanalyzer.h"
 
 class MassifRunner : public QObject
 {
@@ -19,40 +22,19 @@ public:
 
     QProcess *process;
 
-    inline QString getFileName() { return this->fileName; };
-    inline QString getFilePath() { return this->filePath; };
-
     inline QStringList getArgs() {return this->args; };
     inline void addArg(QString arg) { args << arg; };
 
-
-
-    void selectFile(QWidget* parent);
     QString convertWindowsPathToWsl(const QString& winPath);
-    QString getDirectoryPath(QString filePath);
-    QString replaceCppWithOut(const QString fileName);
     QString getMassifFilesDir();
-    void runMassifCheck();
+    void runMassifCheck(FileSelector& fileSelector, Mode mode);
     QString getNextMassifOutFilePath();
-    void clearFileSelection();
 
 private:
     Mode mode = COMPILE;
 
-    QString fileName;
-    QString filePath;
-    QString outFileName;
-    QString outFilePath;
-
-
     QStringList args;
-    void runMassifOutputAnalysis();
-
-public slots:
-    void setMode(Mode mode) {
-        this->mode = mode;
-        clearFileSelection();
-    };
+    void runMassifOutputAnalysis(FileSelector& fileSelector);
 
 signals:
 };

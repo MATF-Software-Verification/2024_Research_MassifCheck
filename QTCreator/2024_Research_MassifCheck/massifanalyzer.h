@@ -4,6 +4,7 @@
 #include "snapshot.h"
 #include <QObject>
 #include <QVector>
+#include "snapshot.h"
 
 class MassifAnalyzer
 {
@@ -12,7 +13,6 @@ public:
 
     bool isMemoryStabilized(const QVector<Snapshot>& snapshots, int currentIndex, int windowSize = 3);
     void detectMemoryLeaks(const QVector<Snapshot>& snapshots);
-
 };
 
 #endif // MASSIFANALYZER_H

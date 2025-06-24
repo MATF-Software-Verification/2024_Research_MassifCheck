@@ -29,6 +29,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
 
         Snapshot.h
         Parser.h Parser.cpp
+        fileselector.h fileselector.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET 2024_Research_MassifCheck APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
