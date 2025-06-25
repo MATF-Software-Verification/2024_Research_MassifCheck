@@ -36,7 +36,7 @@
     <property name="geometry">
      <rect>
       <x>210</x>
-      <y>360</y>
+      <y>390</y>
       <width>121</width>
       <height>29</height>
      </rect>
@@ -175,6 +175,29 @@
       </item>
      </layout>
     </widget>
+   </widget>
+   <widget class="QPushButton" name="btMassifOptions">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>350</y>
+      <width>40</width>
+      <height>40</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>../../Resources/settings_icon.jpg</normaloff>../../Resources/settings_icon.jpg</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>30</width>
+      <height>30</height>
+     </size>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">

@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     QObject::connect(this,  &MainWindow::modeValudeChanged, massifRunner, &MassifRunner::setMode);
+    ui->btMassifOptions->setToolTip("Configure Massif settings");
 }
 
 MainWindow::~MainWindow()
