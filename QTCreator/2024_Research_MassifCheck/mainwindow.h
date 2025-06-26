@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "massifrunner.h"
+#include "massifoptionswindow.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -27,6 +28,8 @@ private slots:
     void on_rbCompile_toggled(bool checked);
     void on_rbBinary_toggled(bool checked);
     void on_rbOutput_toggled(bool checked);
+
+    void on_btMassifOptions_clicked();
 
 private:
     Ui::MainWindow *ui;

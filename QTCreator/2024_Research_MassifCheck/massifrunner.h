@@ -9,6 +9,7 @@
 #include <QMessageBox>
 #include <QRegularExpression>
 #include "ModeEnum.h"
+#include "massifoptions.h"
 
 class MassifRunner : public QObject
 {
@@ -38,6 +39,8 @@ public:
 
 private:
     Mode mode = COMPILE;
+
+    MassifOptions* massifOptions;
 
     QString fileName;
     QString filePath;

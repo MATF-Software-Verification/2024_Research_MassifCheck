@@ -12,3 +12,9 @@ MassifOptionsWindow::~MassifOptionsWindow()
 {
     delete ui;
 }
+
+void MassifOptionsWindow::on_buttonBox_accepted()
+{
+
+}
+

@@ -15,6 +15,9 @@ public:
     explicit MassifOptionsWindow(QWidget *parent = nullptr);
     ~MassifOptionsWindow();
 
+private slots:
+    void on_buttonBox_accepted();
+
 private:
     Ui::MassifOptionsWindow *ui;
 };

@@ -65,3 +65,10 @@ void MainWindow::on_btExecute_clicked()
     massifRunner->runMassifCheck();
 }
 
+
+void MainWindow::on_btMassifOptions_clicked()
+{
+    MassifOptionsWindow massifOptionsWindow;
+    massifOptionsWindow.exec();
+}
+

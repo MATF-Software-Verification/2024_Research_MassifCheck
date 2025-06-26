@@ -7,10 +7,12 @@
 MassifRunner::MassifRunner(QObject *parent)
     : QObject{parent}
     , process(new QProcess())
+    , massifOptions(new MassifOptions())
 {}
 
 MassifRunner::~MassifRunner(){
     delete process;
+    delete massifOptions;
 }
 
 
