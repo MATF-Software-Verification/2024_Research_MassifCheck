@@ -8,17 +8,16 @@ QString MassifOptions::makeAdditionalArguments()
 {
     QString aditionalArguments;
 
-    QString arg = "--heap=";
+    aditionalArguments += "--heap=";
     aditionalArguments += includeHeapProfiling ? "yes " : "no ";
 
-    arg = "--stack=";
+    aditionalArguments += "--stacks=";
     aditionalArguments += includeStackProfiling ? "yes " : "no ";
 
-    arg = "--time-unit=";
-    if ( timeUnit == INSTRUCTIONS) { arg += "i "; }
-    else if ( timeUnit == MILISECONDS ) { arg += "ms "; }
-    else { arg += "B "; }
-    aditionalArguments += arg;
+    aditionalArguments += "--time-unit=";
+    if ( timeUnit == INSTRUCTIONS) { aditionalArguments += "i "; }
+    else if ( timeUnit == MILISECONDS ) { aditionalArguments += "ms "; }
+    else { aditionalArguments += "B "; }
 
     for ( auto fn : ignoreFunctions ){
         // TODO search if the function really exists

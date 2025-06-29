@@ -116,7 +116,7 @@ void MassifRunner::runMassifCheck(){
         QString exePath = convertWindowsPathToWsl(getFilePath());
 
         // Komanda koja pokreće valgrind u WSL i čeka ENTER da zatvori terminal
-        QString command = QString("valgrind --tool=massif --massif-out-file=%1 %2; echo '--- Done ---'; read")
+        QString command = QString("valgrind --tool=massif " + massifOptions->makeAdditionalArguments() + " --massif-out-file=%1 %2; echo '--- Done ---'; read")
                               .arg(massifOut, exePath);
 
         // Using cmd.exe to open a new terminal on widows in case the .out is an interactive program
@@ -176,4 +176,12 @@ void MassifRunner::clearFileSelection(){
     filePath.clear();
     outFileName.clear();
     outFilePath.clear();
+}
+
+void MassifRunner::setMassifOptions(MassifOptions *options)
+{
+    massifOptions->includeHeapProfiling = options->includeHeapProfiling;
+    massifOptions->includeStackProfiling = options->includeStackProfiling;
+    massifOptions->timeUnit = options->timeUnit;
+    massifOptions->ignoreFunctions = options->ignoreFunctions;
 }

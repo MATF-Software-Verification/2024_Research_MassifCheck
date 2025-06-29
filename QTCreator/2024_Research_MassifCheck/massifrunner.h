@@ -36,6 +36,7 @@ public:
     void runMassifCheck();
     QString getNextMassifOutFilePath();
     void clearFileSelection();
+    void setMassifOptions(MassifOptions* options);
 
 private:
     Mode mode = COMPILE;

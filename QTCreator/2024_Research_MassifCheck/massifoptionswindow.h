@@ -2,6 +2,7 @@
 #define MASSIFOPTIONSWINDOW_H
 
 #include <QDialog>
+#include "massifoptions.h"
 
 namespace Ui {
 class MassifOptionsWindow;
@@ -17,6 +18,9 @@ public:
 
 private slots:
     void on_buttonBox_accepted();
+
+signals:
+    void optionsChanged(MassifOptions* options);
 
 private:
     Ui::MassifOptionsWindow *ui;
