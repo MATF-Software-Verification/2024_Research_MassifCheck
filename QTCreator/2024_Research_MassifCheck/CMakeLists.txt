@@ -33,6 +33,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         massifoptionswindow.h massifoptionswindow.cpp massifoptionswindow.ui
         massifoptions.h massifoptions.cpp
         TimeUnit.h
+        fileselector.h fileselector.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET 2024_Research_MassifCheck APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

@@ -5,6 +5,9 @@
 #include "massifrunner.h"
 #include "massifoptionswindow.h"
 #include "massifoptions.h"
+#include "fileselector.h"
+#include "massifanalyzer.h"
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -36,5 +39,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     MassifRunner *massifRunner;
+    FileSelector *fileSelector;
+    Mode mode = COMPILE;
 };
 #endif // MAINWINDOW_H

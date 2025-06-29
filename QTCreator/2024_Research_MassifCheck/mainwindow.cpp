@@ -7,21 +7,22 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
     , massifRunner(new MassifRunner)
+    , fileSelector(new FileSelector)
 {
     ui->setupUi(this);
-    QObject::connect(this,  &MainWindow::modeValudeChanged, massifRunner, &MassifRunner::setMode);
     ui->btMassifOptions->setToolTip("Configure Massif settings");
 }
 
 MainWindow::~MainWindow()
 {
     delete massifRunner;
+    delete fileSelector;
     delete ui;
 }
 
 void MainWindow::on_btLoadFile_clicked()
 {
-    massifRunner->selectFile(this);
+    fileSelector->selectFile(this, mode);
 
     // Just for debugging
     //QMessageBox msgBox;
@@ -32,37 +33,40 @@ void MainWindow::on_btLoadFile_clicked()
     //                "\n " + massifRunner->convertWindowsPathToWsl(massifRunner->getMassifFilesDir()));
     // msgBox.exec();
 
-    this->ui->leFileName->setText(massifRunner->getFileName());
+    this->ui->leFileName->setText(fileSelector->getFileName());
 }
 
 void MainWindow::on_rbCompile_toggled(bool checked){
     if (checked){
-        modeValudeChanged(COMPILE);
+        mode = COMPILE;
+        fileSelector->clearFileSelection();
         this->ui->leFileName->clear();
     }
 };
 
 void MainWindow::on_rbBinary_toggled(bool checked){
     if (checked){
-        modeValudeChanged(BINARY);
+        mode = BINARY;
+        fileSelector->clearFileSelection();
         this->ui->leFileName->clear();
     }
 };
 
 void MainWindow::on_rbOutput_toggled(bool checked){
     if (checked){
-        modeValudeChanged(OUTPUT);
+        mode = OUTPUT;
+        fileSelector->clearFileSelection();
         this->ui->leFileName->clear();
     }
 };
 
 void MainWindow::on_btExecute_clicked()
 {
-    if (massifRunner->getFilePath().isEmpty() || ui->leFileName->text().isEmpty()) {
+    if (fileSelector->getFilePath().isEmpty() || ui->leFileName->text().isEmpty()) {
         QMessageBox::warning(nullptr, "Warning", "No file selected.");
         return;
     }
-    massifRunner->runMassifCheck();
+    massifRunner->runMassifCheck(*fileSelector, mode);
 }
 
 
