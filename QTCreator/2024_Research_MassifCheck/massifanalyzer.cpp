@@ -1,7 +1,8 @@
 #include "massifanalyzer.h"
 #include <QDebug>
 
-MassifAnalyzer::MassifAnalyzer() {}
+MassifAnalyzer::MassifAnalyzer(){}
+
 
 bool MassifAnalyzer::isMemoryStabilized(const QVector<Snapshot>& snapshots, int currentIndex, int windowSize) {
     if (currentIndex < 0 || currentIndex + windowSize >= snapshots.size())

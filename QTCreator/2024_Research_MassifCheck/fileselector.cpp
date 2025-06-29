@@ -73,3 +73,4 @@ void FileSelector::clearFileSelection()
     outFileName.clear();
     outFilePath.clear();
 }
+

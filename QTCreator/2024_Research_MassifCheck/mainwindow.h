@@ -23,9 +23,6 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-signals:
-    void modeValudeChanged(Mode mode);
-
 private slots:
     void on_btLoadFile_clicked();
     void on_btExecute_clicked();

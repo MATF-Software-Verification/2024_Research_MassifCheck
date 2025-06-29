@@ -1,7 +1,5 @@
 #include "massifrunner.h"
 #include <string>
-#include "parser.h"
-#include "massifanalyzer.h"
 #include <QDebug>
 
 MassifRunner::MassifRunner(QObject *parent)
