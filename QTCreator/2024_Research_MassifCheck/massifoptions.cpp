@@ -19,12 +19,6 @@ QString MassifOptions::makeAdditionalArguments()
     else if ( timeUnit == MILISECONDS ) { aditionalArguments += "ms "; }
     else { aditionalArguments += "B "; }
 
-    for ( auto fn : ignoreFunctions ){
-        // TODO search if the function really exists
-
-        aditionalArguments += "--ignore-fn=" + fn + " ";
-    }
-
     return aditionalArguments;
 }
 

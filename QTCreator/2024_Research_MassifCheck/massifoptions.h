@@ -13,7 +13,6 @@ public:
     bool includeHeapProfiling = true;
     bool includeStackProfiling = false;
     TimeUnit timeUnit = INSTRUCTIONS;
-    std::vector<QString> ignoreFunctions;
 
     QString makeAdditionalArguments();
 
