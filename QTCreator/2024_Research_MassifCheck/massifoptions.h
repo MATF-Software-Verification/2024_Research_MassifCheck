@@ -13,6 +13,7 @@ public:
     bool includeHeapProfiling = true;
     bool includeStackProfiling = false;
     TimeUnit timeUnit = INSTRUCTIONS;
+    uint maxSnapshots = 100;
 
     QString makeAdditionalArguments();
 

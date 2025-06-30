@@ -128,4 +128,5 @@ void MassifRunner::setMassifOptions(MassifOptions *options)
     massifOptions->includeHeapProfiling = options->includeHeapProfiling;
     massifOptions->includeStackProfiling = options->includeStackProfiling;
     massifOptions->timeUnit = options->timeUnit;
+    massifOptions->maxSnapshots = options->maxSnapshots;
 }

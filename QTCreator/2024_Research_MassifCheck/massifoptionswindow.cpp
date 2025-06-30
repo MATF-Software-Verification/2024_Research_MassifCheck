@@ -23,6 +23,7 @@ void MassifOptionsWindow::on_buttonBox_accepted()
     } else if ( ui->rbTimeUnitB ){
         options->timeUnit = BYTES;
     }
+    options->maxSnapshots = ui->sbMaxSnapshots->value();
 
     // TODO set functions to ignore based on what is written in tbIgnore functions
 

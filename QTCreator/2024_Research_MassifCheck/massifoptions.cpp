@@ -19,6 +19,8 @@ QString MassifOptions::makeAdditionalArguments()
     else if ( timeUnit == MILISECONDS ) { aditionalArguments += "ms "; }
     else { aditionalArguments += "B "; }
 
+    aditionalArguments += "--max-snapshots=" + std::to_string(maxSnapshots) + " ";
+
     return aditionalArguments;
 }
 
