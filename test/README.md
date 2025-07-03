@@ -35,3 +35,12 @@ In this graph, the vertical spikes represent sudden increases in memory usage. T
 
 
 ![Screenshot from 2025-01-04 00-00-44](https://github.com/user-attachments/assets/adb07cd0-e2fd-47f9-b58c-ca72f99d3c04)
+
+## Test Case 3: `massif.out.3`
+
+**Purpose**: This test case illustrates a long-running program with a gradual and mostly steady increase in memory usage over an extended period. It is intended to test the tool’s ability to capture slow memory growth patterns, which can indicate subtle memory leaks or accumulation of retained data structures.
+
+**Graph Explanation**:
+The vertical axis represents memory usage in megabytes (MB), while the horizontal axis shows elapsed time in milliseconds (Mi). The graph shows a predominantly upward trend with some fluctuations but no significant drops, indicating persistent allocation of memory with minimal or no deallocation. The clustered peaks suggest phases where memory usage slightly spikes, possibly due to batch allocations or temporary buffers. This pattern helps identify programs where memory consumption accumulates steadily, potentially leading to performance degradation or resource exhaustion over time.
+
+![Image](https://github.com/user-attachments/assets/9f185c9f-c0df-42af-a27a-851d8a18cd68)
