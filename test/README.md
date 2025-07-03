@@ -38,9 +38,10 @@ In this graph, the vertical spikes represent sudden increases in memory usage. T
 
 ## Test Case 3: `massif.out.3`
 
-**Purpose**: This test case illustrates a long-running program with a gradual and mostly steady increase in memory usage over an extended period. It is intended to test the tool’s ability to capture slow memory growth patterns, which can indicate subtle memory leaks or accumulation of retained data structures.
+**Purpose**:
+This test case demonstrates a common memory management issue where a fixed-size buffer continuously accumulates data without removing old entries, simulating a memory leak or unbounded growth scenario. The goal is to analyze how memory usage grows steadily over time when old data is not properly discarded, and to identify the impact of periodic clearing (flush) on memory consumption.
 
 **Graph Explanation**:
-The vertical axis represents memory usage in megabytes (MB), while the horizontal axis shows elapsed time in milliseconds (Mi). The graph shows a predominantly upward trend with some fluctuations but no significant drops, indicating persistent allocation of memory with minimal or no deallocation. The clustered peaks suggest phases where memory usage slightly spikes, possibly due to batch allocations or temporary buffers. This pattern helps identify programs where memory consumption accumulates steadily, potentially leading to performance degradation or resource exhaustion over time.
+The massif graph shows a generally increasing trend in memory usage as the internal buffer fills up with log entries that are never removed. The gradual upward slope corresponds to continuous allocation without deallocation, reflecting the accumulation of messages. Occasional drops in the graph represent the points where the flush() method is called, clearing the buffer and releasing memory temporarily. However, the overall trend remains upward due to the absence of old message removal during logging, highlighting potential memory inefficiency.
 
 ![Image](https://github.com/user-attachments/assets/9f185c9f-c0df-42af-a27a-851d8a18cd68)
