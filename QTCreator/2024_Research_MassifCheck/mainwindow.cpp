@@ -60,7 +60,17 @@ void MainWindow::on_btExecute_clicked()
         QMessageBox::warning(nullptr, "Warning", "No file selected.");
         return;
     }
+
+    QString newMassifFilePath = massifRunner->getNextMassifOutFilePath();
     massifRunner->runMassifCheck(*fileSelector, mode);
+
+    // this if is a temporary solution until automatic compilation is developed (not only for binary)
+    // should also refactor the runMassifCheck function so that it returns boolean = true if successful, so that can also be checked in the if
+    if(mode == BINARY){
+        massifSelector->setFileFromPath(newMassifFilePath, OUTPUT);
+        this->ui->leFileName_2->setText(QFileInfo(newMassifFilePath).fileName());
+    }
+
 }
 
 
