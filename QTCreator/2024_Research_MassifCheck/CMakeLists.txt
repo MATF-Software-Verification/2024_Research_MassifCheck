@@ -29,6 +29,10 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
 
         Snapshot.h
         Parser.h Parser.cpp
+        Resources/settings_icon.jpg
+        massifoptionswindow.h massifoptionswindow.cpp massifoptionswindow.ui
+        massifoptions.h massifoptions.cpp
+        TimeUnit.h
         fileselector.h fileselector.cpp
     )
 # Define target properties for Android with Qt 6 as:

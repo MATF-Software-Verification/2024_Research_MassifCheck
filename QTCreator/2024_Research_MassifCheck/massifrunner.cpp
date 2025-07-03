@@ -5,10 +5,12 @@
 MassifRunner::MassifRunner(QObject *parent)
     : QObject{parent}
     , process(new QProcess())
+    , massifOptions(new MassifOptions())
 {}
 
 MassifRunner::~MassifRunner(){
     delete process;
+    delete massifOptions;
 }
 
 QString MassifRunner::convertWindowsPathToWsl(const QString& winPath) {
@@ -65,7 +67,7 @@ void MassifRunner::runMassifCheck(FileSelector& fileSelector, Mode mode){
         QString exePath = convertWindowsPathToWsl(fileSelector.getFilePath());
 
         // Komanda koja pokreće valgrind u WSL i čeka ENTER da zatvori terminal
-        QString command = QString("valgrind --tool=massif --massif-out-file=%1 %2; echo '--- Done ---'; read")
+        QString command = QString("valgrind --tool=massif " + massifOptions->makeAdditionalArguments() + " --massif-out-file=%1 %2; echo '--- Done ---'; read")
                               .arg(massifOut, exePath);
 
         // Using cmd.exe to open a new terminal on widows in case the .out is an interactive program
@@ -118,4 +120,13 @@ QString MassifRunner::getNextMassifOutFilePath() {
     int nextIndex = maxIndex + 1;
     QString fileName = QString("massif.out.%1").arg(nextIndex);
     return getMassifFilesDir() + "/" + fileName;
+}
+
+
+void MassifRunner::setMassifOptions(MassifOptions *options)
+{
+    massifOptions->includeHeapProfiling = options->includeHeapProfiling;
+    massifOptions->includeStackProfiling = options->includeStackProfiling;
+    massifOptions->timeUnit = options->timeUnit;
+    massifOptions->maxSnapshots = options->maxSnapshots;
 }

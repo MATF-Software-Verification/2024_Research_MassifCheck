@@ -12,6 +12,7 @@
 #include "Parser.h"
 #include "fileselector.h"
 #include "massifanalyzer.h"
+#include "massifoptions.h"
 
 class MassifRunner : public QObject
 {
@@ -25,16 +26,20 @@ public:
     inline QStringList getArgs() {return this->args; };
     inline void addArg(QString arg) { args << arg; };
 
+
     QString convertWindowsPathToWsl(const QString& winPath);
     QString getMassifFilesDir();
     void runMassifCheck(FileSelector& fileSelector, Mode mode);
     QString getNextMassifOutFilePath();
+    void setMassifOptions(MassifOptions* options);
 
 private:
     Mode mode = COMPILE;
 
     QStringList args;
     void runMassifOutputAnalysis(FileSelector& fileSelector);
+
+    MassifOptions* massifOptions;
 
 signals:
 };

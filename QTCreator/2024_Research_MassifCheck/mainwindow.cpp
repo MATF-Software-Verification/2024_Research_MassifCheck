@@ -2,6 +2,7 @@
 #include <QMessageBox>
 #include "./ui_mainwindow.h"
 #include <QDir>
+#include <QStyle>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -10,6 +11,7 @@ MainWindow::MainWindow(QWidget *parent)
     , fileSelector(new FileSelector)
 {
     ui->setupUi(this);
+    ui->btMassifOptions->setToolTip("Configure Massif settings");
 }
 
 MainWindow::~MainWindow()
@@ -66,5 +68,20 @@ void MainWindow::on_btExecute_clicked()
         return;
     }
     massifRunner->runMassifCheck(*fileSelector, mode);
+}
+
+
+void MainWindow::on_btMassifOptions_clicked()
+{
+    MassifOptionsWindow massifOptionsWindow;
+
+    QObject::connect(&massifOptionsWindow, &MassifOptionsWindow::optionsChanged, this, &MainWindow::setMassifOptions);
+
+    massifOptionsWindow.exec();
+}
+
+void MainWindow::setMassifOptions(MassifOptions *options)
+{
+    massifRunner->setMassifOptions(options);
 }
 

@@ -35,3 +35,13 @@ In this graph, the vertical spikes represent sudden increases in memory usage. T
 
 
 ![Screenshot from 2025-01-04 00-00-44](https://github.com/user-attachments/assets/adb07cd0-e2fd-47f9-b58c-ca72f99d3c04)
+
+## Test Case 3: `massif.out.3`
+
+**Purpose**:
+This test case demonstrates a common memory management issue where a fixed-size buffer continuously accumulates data without removing old entries, simulating a memory leak or unbounded growth scenario. The goal is to analyze how memory usage grows steadily over time when old data is not properly discarded, and to identify the impact of periodic clearing (flush) on memory consumption.
+
+**Graph Explanation**:
+The massif graph shows a generally increasing trend in memory usage as the internal buffer fills up with log entries that are never removed. The gradual upward slope corresponds to continuous allocation without deallocation, reflecting the accumulation of messages. Occasional drops in the graph represent the points where the flush() method is called, clearing the buffer and releasing memory temporarily. However, the overall trend remains upward due to the absence of old message removal during logging, highlighting potential memory inefficiency.
+
+![Image](https://github.com/user-attachments/assets/9f185c9f-c0df-42af-a27a-851d8a18cd68)
