@@ -14,6 +14,7 @@
 #include "massifanalyzer.h"
 #include "massifoptions.h"
 
+
 class MassifRunner : public QObject
 {
     Q_OBJECT
@@ -32,12 +33,12 @@ public:
     void runMassifCheck(FileSelector& fileSelector, Mode mode);
     QString getNextMassifOutFilePath();
     void setMassifOptions(MassifOptions* options);
+    QString runMassifOutputAnalysis(FileSelector& fileSelector);
 
 private:
     Mode mode = COMPILE;
 
     QStringList args;
-    void runMassifOutputAnalysis(FileSelector& fileSelector);
 
     MassifOptions* massifOptions;
 

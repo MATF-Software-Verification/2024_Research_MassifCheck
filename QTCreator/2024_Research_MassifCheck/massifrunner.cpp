@@ -2,6 +2,7 @@
 #include <string>
 #include <QDebug>
 
+
 MassifRunner::MassifRunner(QObject *parent)
     : QObject{parent}
     , process(new QProcess())
@@ -79,24 +80,23 @@ void MassifRunner::runMassifCheck(FileSelector& fileSelector, Mode mode){
             QMessageBox::warning(nullptr, "Error", "Failed to launch Valgrind in terminal.");
         }
     }
-    else if ( mode == OUTPUT){
-        runMassifOutputAnalysis(fileSelector);
-    }
 }
 
-void MassifRunner::runMassifOutputAnalysis(FileSelector& fileSelector) {
+QString MassifRunner::runMassifOutputAnalysis(FileSelector& fileSelector) {
     Parser parser;
     auto [header, snapshots] = parser.parseMassifFile(fileSelector.getFilePath());
 
     if (snapshots.isEmpty()) {
         QMessageBox::warning(nullptr, "Error", "No snapshots found in the file.");
-        return;
+        return "";
     }
 
     MassifAnalyzer analyzer;
-    analyzer.detectMemoryLeaks(snapshots);
+    QString text = analyzer.detectMemoryLeaks(snapshots);
 
-    QMessageBox::information(nullptr, "Analysis", "Memory analysis completed. Check application output.");
+    QMessageBox::information(nullptr, "Analysis", "Memory analysis completed. Press OK for results.");
+    return text;
+
 }
 
 QString MassifRunner::getNextMassifOutFilePath() {

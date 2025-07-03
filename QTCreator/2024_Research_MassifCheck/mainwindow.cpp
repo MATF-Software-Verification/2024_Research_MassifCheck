@@ -54,14 +54,6 @@ void MainWindow::on_rbBinary_toggled(bool checked){
     }
 };
 
-void MainWindow::on_rbOutput_toggled(bool checked){
-    if (checked){
-        mode = OUTPUT;
-        fileSelector->clearFileSelection();
-        this->ui->leFileName->clear();
-    }
-};
-
 void MainWindow::on_btExecute_clicked()
 {
     if (fileSelector->getFilePath().isEmpty() || ui->leFileName->text().isEmpty()) {
@@ -100,6 +92,11 @@ void MainWindow::on_btShowResult_clicked()
         QMessageBox::warning(nullptr, "Warning", "No file selected.");
         return;
     }
-    massifRunner->runMassifCheck(*massifSelector, OUTPUT);
+
+    QString text = massifRunner->runMassifOutputAnalysis(*massifSelector);
+
+    ResultDialog dialog(this);
+    dialog.setText(text);
+    dialog.exec();
 }
 
