@@ -45,3 +45,13 @@ This test case demonstrates a common memory management issue where a fixed-size 
 The massif graph shows a generally increasing trend in memory usage as the internal buffer fills up with log entries that are never removed. The gradual upward slope corresponds to continuous allocation without deallocation, reflecting the accumulation of messages. Occasional drops in the graph represent the points where the flush() method is called, clearing the buffer and releasing memory temporarily. However, the overall trend remains upward due to the absence of old message removal during logging, highlighting potential memory inefficiency.
 
 ![Image](https://github.com/user-attachments/assets/9f185c9f-c0df-42af-a27a-851d8a18cd68)
+
+## Test Case 4: `massif.out.4`
+
+**Purpose**:
+This test simulates a program that repeatedly allocates heap memory and occasionally throws an exception before the allocated memory is freed. The purpose is to demonstrate how exceptions can cause memory leaks when proper cleanup is not done.
+
+**Graph Explanation**:
+The memory usage graph shows a steady increase in heap memory consumption as the program runs through a loop. At regular intervals (every 100 iterations), an exception is thrown after memory allocation, but before it is freed. Since the delete[] is never called, the leaked memory accumulates, resulting in a steadily rising graph without drops, clearly showing a growing memory leak.
+
+![Screenshot 2025-07-03 205806](https://github.com/user-attachments/assets/5c2122bb-4995-4b84-9ca8-af1e54475efc)
