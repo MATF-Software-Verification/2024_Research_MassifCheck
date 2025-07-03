@@ -34,10 +34,12 @@ void MassifOptionsWindow::on_buttonBox_accepted()
     MassifOptions* options = new MassifOptions();
     options->includeHeapProfiling = ui->rbHeapYes->isChecked();
     options->includeStackProfiling = ui->rbStackYes->isChecked();
-    if ( ui->rbTimeUnitMs ){
+    if ( ui->rbTimeUnitMs->isChecked() ){
         options->timeUnit = MILISECONDS;
-    } else if ( ui->rbTimeUnitB ){
+    } else if ( ui->rbTimeUnitB->isChecked() ){
         options->timeUnit = BYTES;
+    } else {
+        options->timeUnit = INSTRUCTIONS;
     }
     options->maxSnapshots = ui->sbMaxSnapshots->value();
 
