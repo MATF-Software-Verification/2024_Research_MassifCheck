@@ -74,3 +74,13 @@ void FileSelector::clearFileSelection()
     outFilePath.clear();
 }
 
+void FileSelector::setFileFromPath(const QString& path, Mode mode)
+{
+    filePath = path;
+    fileName = QFileInfo(path).fileName();
+
+    if (mode == COMPILE) {
+        outFileName = replaceCppWithOut(fileName);
+        outFilePath = getDirectoryPath(filePath);
+    }
+}
