@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>558</width>
-    <height>484</height>
+    <width>1225</width>
+    <height>486</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,6 +19,19 @@
      <x>50</x>
      <y>30</y>
      <width>461</width>
+     <height>411</height>
+    </rect>
+   </property>
+   <property name="readOnly">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QPlainTextEdit" name="plainTextEdit_2">
+   <property name="geometry">
+    <rect>
+     <x>540</x>
+     <y>30</y>
+     <width>641</width>
      <height>411</height>
     </rect>
    </property>

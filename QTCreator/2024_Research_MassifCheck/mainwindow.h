@@ -42,5 +42,6 @@ private:
     FileSelector *fileSelector;
     FileSelector *massifSelector;
     Mode mode = COMPILE;
+
 };
 #endif // MAINWINDOW_H

@@ -104,9 +104,13 @@ void MainWindow::on_btShowResult_clicked()
     }
 
     QString text = massifRunner->runMassifOutputAnalysis(*massifSelector);
+    QString output = massifRunner->MassifGraphUsingMsPrint(*massifSelector);
+
 
     ResultDialog dialog(this);
     dialog.setText(text);
+    dialog.setGraph(output);
     dialog.exec();
 }
+
 

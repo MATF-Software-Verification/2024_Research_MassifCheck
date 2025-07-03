@@ -16,6 +16,8 @@ public:
     ~ResultDialog();
 
     void setText(const QString &text);
+    void setGraph(const QString &graph);
+
 
 private:
     Ui::ResultDialog *ui;

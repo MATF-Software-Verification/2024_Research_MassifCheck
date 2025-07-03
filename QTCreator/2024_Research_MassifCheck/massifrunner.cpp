@@ -99,6 +99,34 @@ QString MassifRunner::runMassifOutputAnalysis(FileSelector& fileSelector) {
 
 }
 
+QString MassifRunner::MassifGraphUsingMsPrint(const FileSelector& massifSelector) {
+    QString massifFilePath = convertWindowsPathToWsl(massifSelector.getFilePath());
+
+    QStringList args;
+    args << "ms_print" << massifFilePath;
+
+    QProcess process;
+    process.start("wsl", args);
+
+    bool finished = process.waitForFinished(10000);
+    if (!finished) {
+        qWarning() << "ms_print process timed out";
+        return "Error: ms_print process timed out.";
+    }
+
+    QByteArray output = process.readAllStandardOutput();
+    QByteArray errorOutput = process.readAllStandardError();
+
+    if (!errorOutput.isEmpty()) {
+        qWarning() << "ms_print error:" << errorOutput;
+        return "Error running ms_print:\n" + QString(errorOutput);
+    }
+
+    return QString::fromUtf8(output);
+}
+
+
+
 QString MassifRunner::getNextMassifOutFilePath() {
     QString massifDir = getMassifFilesDir();
     QDir dir(massifDir);

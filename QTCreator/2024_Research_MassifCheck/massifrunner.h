@@ -34,6 +34,7 @@ public:
     QString getNextMassifOutFilePath();
     void setMassifOptions(MassifOptions* options);
     QString runMassifOutputAnalysis(FileSelector& fileSelector);
+    QString MassifGraphUsingMsPrint(const FileSelector& massifSelector);
 
 private:
     Mode mode = COMPILE;
