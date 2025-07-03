@@ -9,6 +9,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
     , massifRunner(new MassifRunner)
     , fileSelector(new FileSelector)
+    , massifSelector(new FileSelector)
 {
     ui->setupUi(this);
     ui->btMassifOptions->setToolTip("Configure Massif settings");
@@ -83,5 +84,22 @@ void MainWindow::on_btMassifOptions_clicked()
 void MainWindow::setMassifOptions(MassifOptions *options)
 {
     massifRunner->setMassifOptions(options);
+}
+
+
+void MainWindow::on_btLoadFile_2_clicked()
+{
+    massifSelector->selectFile(this, OUTPUT);
+    this->ui->leFileName_2->setText(massifSelector->getFileName());
+}
+
+
+void MainWindow::on_btShowResult_clicked()
+{
+    if (massifSelector->getFilePath().isEmpty() || ui->leFileName_2->text().isEmpty()) {
+        QMessageBox::warning(nullptr, "Warning", "No file selected.");
+        return;
+    }
+    massifRunner->runMassifCheck(*massifSelector, OUTPUT);
 }
 

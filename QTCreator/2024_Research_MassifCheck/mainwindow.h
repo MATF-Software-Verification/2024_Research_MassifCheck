@@ -33,10 +33,15 @@ private slots:
     void on_btMassifOptions_clicked();
     void setMassifOptions(MassifOptions* options);
 
+    void on_btLoadFile_2_clicked();
+
+    void on_btShowResult_clicked();
+
 private:
     Ui::MainWindow *ui;
     MassifRunner *massifRunner;
     FileSelector *fileSelector;
+    FileSelector *massifSelector;
     Mode mode = COMPILE;
 };
 #endif // MAINWINDOW_H
