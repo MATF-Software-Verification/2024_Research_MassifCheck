@@ -27,6 +27,7 @@ public:
     QString getDirectoryPath(QString filePath);
     QString replaceCppWithOut(const QString fileName);
     void clearFileSelection();
+    void setFileFromPath(const QString& path, Mode mode);
 
 signals:
 

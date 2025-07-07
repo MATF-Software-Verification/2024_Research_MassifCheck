@@ -7,7 +7,7 @@
 #include "massifoptions.h"
 #include "fileselector.h"
 #include "massifanalyzer.h"
-
+#include "resultdialog.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -28,15 +28,20 @@ private slots:
     void on_btExecute_clicked();
     void on_rbCompile_toggled(bool checked);
     void on_rbBinary_toggled(bool checked);
-    void on_rbOutput_toggled(bool checked);
 
     void on_btMassifOptions_clicked();
     void setMassifOptions(MassifOptions* options);
+
+    void on_btLoadMassifOutFile_clicked();
+
+    void on_btShowResult_clicked();
 
 private:
     Ui::MainWindow *ui;
     MassifRunner *massifRunner;
     FileSelector *fileSelector;
+    FileSelector *massifSelector;
     Mode mode = COMPILE;
+
 };
 #endif // MAINWINDOW_H

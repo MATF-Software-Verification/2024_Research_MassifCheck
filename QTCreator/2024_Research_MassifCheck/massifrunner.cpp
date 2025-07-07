@@ -2,6 +2,7 @@
 #include <string>
 #include <QDebug>
 
+
 MassifRunner::MassifRunner(QObject *parent)
     : QObject{parent}
     , process(new QProcess())
@@ -79,25 +80,52 @@ void MassifRunner::runMassifCheck(FileSelector& fileSelector, Mode mode){
             QMessageBox::warning(nullptr, "Error", "Failed to launch Valgrind in terminal.");
         }
     }
-    else if ( mode == OUTPUT){
-        runMassifOutputAnalysis(fileSelector);
-    }
 }
 
-void MassifRunner::runMassifOutputAnalysis(FileSelector& fileSelector) {
+QString MassifRunner::runMassifOutputAnalysis(FileSelector& fileSelector) {
     Parser parser;
     auto [header, snapshots] = parser.parseMassifFile(fileSelector.getFilePath());
 
     if (snapshots.isEmpty()) {
         QMessageBox::warning(nullptr, "Error", "No snapshots found in the file.");
-        return;
+        return "";
     }
 
     MassifAnalyzer analyzer;
-    analyzer.detectMemoryLeaks(snapshots);
+    QString text = analyzer.detectMemoryLeaks(snapshots);
 
-    QMessageBox::information(nullptr, "Analysis", "Memory analysis completed. Check application output.");
+    QMessageBox::information(nullptr, "Analysis", "Memory analysis completed. Press OK for results.");
+    return text;
+
 }
+
+QString MassifRunner::MassifGraphUsingMsPrint(const FileSelector& massifSelector) {
+    QString massifFilePath = convertWindowsPathToWsl(massifSelector.getFilePath());
+
+    QStringList args;
+    args << "ms_print" << massifFilePath;
+
+    QProcess process;
+    process.start("wsl", args);
+
+    bool finished = process.waitForFinished(10000);
+    if (!finished) {
+        qWarning() << "ms_print process timed out";
+        return "Error: ms_print process timed out.";
+    }
+
+    QByteArray output = process.readAllStandardOutput();
+    QByteArray errorOutput = process.readAllStandardError();
+
+    if (!errorOutput.isEmpty()) {
+        qWarning() << "ms_print error:" << errorOutput;
+        return "Error running ms_print:\n" + QString(errorOutput);
+    }
+
+    return QString::fromUtf8(output);
+}
+
+
 
 QString MassifRunner::getNextMassifOutFilePath() {
     QString massifDir = getMassifFilesDir();

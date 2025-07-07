@@ -18,13 +18,15 @@ bool MassifAnalyzer::isMemoryStabilized(const QVector<Snapshot>& snapshots, int 
     return true;
 }
 
-void MassifAnalyzer::detectMemoryLeaks(const QVector<Snapshot>& snapshots) {
+QString MassifAnalyzer::detectMemoryLeaks(const QVector<Snapshot>& snapshots) {
     const double MEMORY_JUMP_THRESHOLD = 0.5; // 50%
     const qint64 LARGE_MEMORY_THRESHOLD = 1000000000; // 1 GB
     const qint64 BYTES_TO_MB = 1024 * 1024;
 
     Snapshot previousSnapshot;
     bool hasPreviousSnapshot = false;
+
+    QString result;
 
     for (int i = 0; i < snapshots.size(); ++i) {
         const Snapshot& snap = snapshots[i];
@@ -42,14 +44,17 @@ void MassifAnalyzer::detectMemoryLeaks(const QVector<Snapshot>& snapshots) {
             }
 
             if (heapJump >= MEMORY_JUMP_THRESHOLD) {
-                qDebug() << "Info: Heap memory jump between snapshot"
-                         << previousSnapshot.snapshot << "and snapshot"
-                         << snap.snapshot << "is" << heapJump * 100 << "%";
+                result += QString("Info: Heap memory jump between snapshot %1 and snapshot %2 is %3%\n")
+                    .arg(previousSnapshot.snapshot)
+                    .arg(snap.snapshot)
+                    .arg(heapJump * 100, 0, 'f', 2);
 
                 if (isMemoryStabilized(snapshots, i)) {
-                    qDebug() << "Note: Memory stabilized after snapshot" << snap.snapshot;
+                    result += QString("Note: Memory stabilized after snapshot %1\n")
+                        .arg(snap.snapshot);
                 } else {
-                    qDebug() << "Warning: Memory continues to grow after snapshot" << snap.snapshot;
+                    result += QString("Warning: Memory continues to grow after snapshot %1\n")
+                        .arg(snap.snapshot);
                 }
             }
 
@@ -65,20 +70,23 @@ void MassifAnalyzer::detectMemoryLeaks(const QVector<Snapshot>& snapshots) {
             }
 
             if (stackJump > MEMORY_JUMP_THRESHOLD) {
-                qDebug() << "Info: Stack memory jump between snapshot"
-                         << previousSnapshot.snapshot << "and snapshot"
-                         << snap.snapshot << "is" << stackJump * 100 << "%";
+                result += QString("Info: Stack memory jump between snapshot %1 and snapshot %2 is %3%\n")
+                    .arg(previousSnapshot.snapshot)
+                    .arg(snap.snapshot)
+                    .arg(stackJump * 100, 0, 'f', 2);
             }
         }
 
         if (snap.mem_heap_B > LARGE_MEMORY_THRESHOLD) {
-            qDebug() << "Warning: Large heap memory detected in snapshot"
-                     << snap.snapshot << ":" << snap.mem_heap_B / BYTES_TO_MB << "MB";
+            result += QString("Warning: Large heap memory detected in snapshot %1: %2 MB\n")
+                .arg(snap.snapshot)
+                .arg(snap.mem_heap_B / BYTES_TO_MB);
         }
 
         if (snap.mem_stacks_B > LARGE_MEMORY_THRESHOLD) {
-            qDebug() << "Warning: Large stack memory detected in snapshot"
-                     << snap.snapshot << ":" << snap.mem_stacks_B / BYTES_TO_MB << "MB";
+            result += QString("Warning: Large stack memory detected in snapshot %1: %2 MB\n")
+                .arg(snap.snapshot)
+                .arg(snap.mem_stacks_B / BYTES_TO_MB);
         }
 
         // Update previous only if valid
@@ -87,4 +95,5 @@ void MassifAnalyzer::detectMemoryLeaks(const QVector<Snapshot>& snapshots) {
             hasPreviousSnapshot = true;
         }
     }
+    return result;
 }
