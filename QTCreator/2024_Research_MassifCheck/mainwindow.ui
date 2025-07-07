@@ -223,7 +223,7 @@
      <enum>Qt::Orientation::Horizontal</enum>
     </property>
    </widget>
-   <widget class="QLineEdit" name="leFileName_2">
+   <widget class="QLineEdit" name="leSelectedMassifOutFile">
     <property name="geometry">
      <rect>
       <x>160</x>
@@ -247,12 +247,12 @@
      <string>Please choose a file to load</string>
     </property>
    </widget>
-   <widget class="QLabel" name="lbSelectedFile_2">
+   <widget class="QLabel" name="lbSelectedMassifOutFile">
     <property name="geometry">
      <rect>
       <x>0</x>
       <y>330</y>
-      <width>341</width>
+      <width>291</width>
       <height>29</height>
      </rect>
     </property>
@@ -268,7 +268,7 @@
      <set>Qt::AlignmentFlag::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QPushButton" name="btLoadFile_2">
+   <widget class="QPushButton" name="btLoadMassifOutFile">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -293,7 +293,7 @@
      <x>0</x>
      <y>0</y>
      <width>552</width>
-     <height>25</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

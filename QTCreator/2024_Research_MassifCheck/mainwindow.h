@@ -32,7 +32,7 @@ private slots:
     void on_btMassifOptions_clicked();
     void setMassifOptions(MassifOptions* options);
 
-    void on_btLoadFile_2_clicked();
+    void on_btLoadMassifOutFile_clicked();
 
     void on_btShowResult_clicked();
 
