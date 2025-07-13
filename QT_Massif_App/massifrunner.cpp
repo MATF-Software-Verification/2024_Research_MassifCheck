@@ -35,7 +35,6 @@ QString MassifRunner::getMassifFilesDir() {
     dir.cdUp();
     dir.cdUp();
     dir.cdUp();
-    dir.cdUp();
 
 
     QString massifPath = dir.absoluteFilePath("massif_files");
