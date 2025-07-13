@@ -96,6 +96,69 @@ valgrind --version
 
 ---
 
+## 🧪  Automated Massif Profiling for C and C++ Tests with `run_massif_on_tests.sh` (Optional)
+
+The `run_massif_on_tests.sh` helper script is optional and automates the process of compiling and running C and C++ tests with Valgrind's Massif tool to generate profiling data.
+This script can be used as a faster way to generate Massif output files, but all the same functionality is available through the Qt application itself.
+
+### 🔍 **What it does:**
+
+- Searches for `.c` and `.cpp` files listed in the `test/` directory.
+    
+- Compiles them using the appropriate compiler:
+    
+    - `gcc` for `.c` files
+    - `g++` for `.cpp` files
+        
+- Automatically creates the `massif_files/` directory if it doesn't exist.
+    
+- Runs each compiled test through `valgrind --tool=massif`.
+    
+- Saves the output as `massif.out.<n>` files inside the `massif_files/` directory.
+
+📂 Example file structure:
+```
+├── QT_Massif_App/
+├── test/
+│   ├── test1.c
+│   ├── test2.c
+│   └── test3.cpp
+├── massif_files/
+│   ├── massif.out.1
+│   ├── massif.out.2
+│   └── massif.out.3
+└── run_massif_on_tests.sh
+```
+💡 This script is helpful for quickly generating Massif profiling data for test binaries outside the Qt application interface.
+
+### ⚙️ **How to use:**
+
+1. **(Optional)** Predefined Test Files:
+    - The script is currently hardcoded to run the following test files: `test1.c`, `test2.c`, `test3.cpp`.
+    - To add your own test files, simply edit the `TEST_FILES` array in the script. For example:
+
+    ```bash
+    TEST_FILES=("test1.c" "test2.c" "test3.cpp" "my_new_test4.c")
+    ```
+    - The script will automatically detect the correct compiler based on the file extension (`gcc` for `.c` and `g++` for `.cpp`).
+    > **Note:** This step is optional. If you don't need to modify the test files, you can skip it and use the default ones.
+
+    
+2. Make sure `run_massif_on_tests.sh` is executable:
+
+    ```bash
+    chmod +x run_massif_on_tests.sh
+    ```
+3. Run the script:
+
+    ```bash
+    ./run_massif_on_tests.sh
+    ```
+
+The script will automatically compile and run each test, saving the profiling results in the `massif_files/` directory.
+
+---
+
 ## 📌 Notes
 
 - Valgrind runs only on Linux-based systems (including WSL).
