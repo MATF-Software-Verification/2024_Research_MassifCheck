@@ -7,9 +7,9 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
-    , massifRunner(new MassifRunner)
-    , fileSelector(new FileSelector)
-    , massifSelector(new FileSelector)
+    , massifRunner(new MassifRunner(this))
+    , fileSelector(new FileSelector(this))
+    , massifSelector(new FileSelector(this))
 {
     ui->setupUi(this);
     ui->btMassifOptions->setToolTip("Configure Massif settings");
@@ -17,9 +17,6 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-    delete massifRunner;
-    delete fileSelector;
-    delete massifSelector;
     delete ui;
 }
 

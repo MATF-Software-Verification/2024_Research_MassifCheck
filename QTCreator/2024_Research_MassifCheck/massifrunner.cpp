@@ -5,14 +5,12 @@
 
 MassifRunner::MassifRunner(QObject *parent)
     : QObject{parent}
-    , process(new QProcess())
-    , massifOptions(new MassifOptions())
+    , process(new QProcess(this))
+    , massifOptions(new MassifOptions(this))
 {}
 
-MassifRunner::~MassifRunner(){
-    delete process;
-    delete massifOptions;
-}
+MassifRunner::~MassifRunner() = default;
+
 
 QString MassifRunner::convertWindowsPathToWsl(const QString& winPath) {
     QFileInfo fileInfo(winPath);
