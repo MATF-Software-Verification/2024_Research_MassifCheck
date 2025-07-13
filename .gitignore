@@ -1,9 +1,8 @@
-#ignorisanje build/
 build/
 
-# ignorisanje test/ direktorijuma osim .c i .cpp
+massif_files/*
+
+# ignore test/ directory except .c & .cpp
 test/*
 !test/*.c
 !test/*.cpp
-
-CMakeLists.txt.user
