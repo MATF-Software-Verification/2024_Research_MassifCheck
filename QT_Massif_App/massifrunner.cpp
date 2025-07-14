@@ -5,14 +5,12 @@
 
 MassifRunner::MassifRunner(QObject *parent)
     : QObject{parent}
-    , process(new QProcess())
-    , massifOptions(new MassifOptions())
+    , process(new QProcess(this))
+    , massifOptions(new MassifOptions(this))
 {}
 
-MassifRunner::~MassifRunner(){
-    delete process;
-    delete massifOptions;
-}
+MassifRunner::~MassifRunner() = default;
+
 
 QString MassifRunner::convertWindowsPathToWsl(const QString& winPath) {
     QFileInfo fileInfo(winPath);
@@ -37,15 +35,19 @@ QString MassifRunner::getMassifFilesDir() {
     dir.cdUp();
     dir.cdUp();
     dir.cdUp();
-    dir.cdUp();
 
-    // Go into massif_files
-    if (dir.cd("massif_files")) {
-        return dir.absolutePath();
-    } else {
-        qWarning() << "massif_files directory not found!";
-        return QString();
+
+    QString massifPath = dir.absoluteFilePath("massif_files");
+
+    QDir targetDir(massifPath);
+    if (!targetDir.exists()) {
+        if (!dir.mkdir("massif_files")) {
+            qWarning() << "Failed to create massif_files directory at" << massifPath;
+            return QString();
+        }
     }
+
+    return massifPath;
 }
 
 void MassifRunner::runMassifCheck(FileSelector& fileSelector, Mode mode){
