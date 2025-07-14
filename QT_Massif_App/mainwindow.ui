@@ -141,7 +141,7 @@
       <rect>
        <x>20</x>
        <y>34</y>
-       <width>383</width>
+       <width>403</width>
        <height>75</height>
       </rect>
      </property>
@@ -149,7 +149,7 @@
       <item>
        <widget class="QRadioButton" name="rbCompile">
         <property name="text">
-         <string>Compile C++ source file and run massif</string>
+         <string>Compile C/C++ source file and run massif</string>
         </property>
         <property name="checked">
          <bool>true</bool>
@@ -293,7 +293,7 @@
      <x>0</x>
      <y>0</y>
      <width>552</width>
-     <height>21</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>
