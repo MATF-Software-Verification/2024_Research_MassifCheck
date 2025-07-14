@@ -54,7 +54,12 @@ void MassifRunner::runMassifCheck(FileSelector& fileSelector, Mode mode){
     args.clear();
 
     if ( mode == COMPILE ){
-        addArg(QString::fromStdString("g++"));
+        if (fileSelector.getFileName().endsWith(".cpp")){
+            addArg(QString::fromStdString("g++"));
+        }
+        else {
+            addArg(QString::fromStdString("gcc"));
+        }
         addArg(QString::fromStdString("-g"));
         addArg(convertWindowsPathToWsl(fileSelector.getFilePath()));
         addArg(QString::fromStdString("-o"));
