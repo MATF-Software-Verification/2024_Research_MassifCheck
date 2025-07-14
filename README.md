@@ -1,11 +1,11 @@
 # 2024_Research_MassifCheck
-Qt desktop application for running and analyzing Valgrind Massif heap memory profiling output.
+**Qt** desktop application for running and analyzing **Valgrind Massif** heap memory profiling output.
 
 ---
 
 ## ✨ Current Features
 
-- Select a C++ source file (.cpp) to automatically compile it and analyze with Valgrind Massif
+- Select a ``C`` or ``C++`` source file (.c or .cpp) to automatically compile it and analyze with Valgrind Massif
 - Select a compiled binary to analyze
 - Run Valgrind's Massif tool with custom options
 - Parse Massif output
@@ -13,12 +13,13 @@ Qt desktop application for running and analyzing Valgrind Massif heap memory pro
 
 ---
 
-## ## 🚀 Getting Started
+## 🚀 Getting Started
 ### 1. Prerequisites
 
 - [Qt Creator](https://www.qt.io/download) (6.0+)
 - WSL (Windows Subsystem for Linux)
 - Ubuntu distribution inside WSL
+- `g++` and `gcc` compilers installed inside WSL
 - Valgrind installed in WSL
 
 ---
@@ -61,7 +62,25 @@ Then set Ubuntu as default:
 wsl --set-default Ubuntu-22.04
 ```
 
-#### c. Install Valgrind in Ubuntu
+#### c. Install build-essential tools in Ubuntu
+
+Open powershell and launch wsl
+
+```powershell
+wsl
+```
+
+Then inside wsl run 
+
+```powershell
+sudo apt update
+sudo apt install build-essential
+```
+
+The `build-essential` package includes `gcc`, `g++`, and other tools required for compiling C/C++ programs.
+
+
+#### d. Install Valgrind in Ubuntu
 
 Open powershell and launch wsl
 
@@ -86,7 +105,7 @@ valgrind --version
 
 ## 🛠️ Building the Project
 
-- Open massif-visual-analyzer.pro in Qt Creator
+- Open the project folder containing `CMakeLists.txt` in Qt Creator
 
 - Configure with a Desktop kit
 
