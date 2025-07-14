@@ -25,7 +25,7 @@ public:
     void selectFile(QWidget* parent, Mode mode);
     QString convertWindowsPathToWsl(const QString& winPath);
     QString getDirectoryPath(QString filePath);
-    QString replaceCppWithOut(const QString fileName);
+    QString makeOutFIleName(const QString fileName);
     void clearFileSelection();
     void setFileFromPath(const QString& path, Mode mode);
 

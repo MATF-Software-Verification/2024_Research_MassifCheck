@@ -9,7 +9,7 @@ void FileSelector::selectFile(QWidget* parent, Mode mode){
     std::string fileType;
     if ( mode == COMPILE){
         description = "Open Source File";
-        fileType = "C++ Files (*.cpp)";
+        fileType = "C/C++ Files (*.c *.cpp)";
     }
     else if ( mode == BINARY){
         description = "Open Binary File";
@@ -28,7 +28,7 @@ void FileSelector::selectFile(QWidget* parent, Mode mode){
     fileName = QFileInfo(filePath).fileName();
 
     if ( mode == COMPILE){
-        outFileName = replaceCppWithOut(fileName);
+        outFileName = makeOutFIleName(fileName);
         outFilePath = getDirectoryPath(filePath);
     }
 
@@ -59,9 +59,12 @@ QString FileSelector::getDirectoryPath(QString filePath){
     return QString();
 }
 
-QString FileSelector::replaceCppWithOut(const QString fileName) {
+QString FileSelector::makeOutFIleName(const QString fileName) {
     if (fileName.endsWith(".cpp", Qt::CaseInsensitive)) {
         return fileName.left(fileName.length() - 4) + ".out";
+    }
+    else if (fileName.endsWith(".c", Qt::CaseInsensitive)){
+        return fileName.left(fileName.length() - 2) + ".out";
     }
     return fileName + ".out";
 }
@@ -80,7 +83,7 @@ void FileSelector::setFileFromPath(const QString& path, Mode mode)
     fileName = QFileInfo(path).fileName();
 
     if (mode == COMPILE) {
-        outFileName = replaceCppWithOut(fileName);
+        outFileName = makeOutFIleName(fileName);
         outFilePath = getDirectoryPath(filePath);
     }
 }
