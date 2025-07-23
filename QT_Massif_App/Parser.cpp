@@ -22,7 +22,7 @@ std::pair<QMap<QString, QString>, QVector<Snapshot>> Parser::parseMassifFile(con
     QRegularExpression headerRegex(R"((\w+):\s*(.+))");
     QRegularExpression snapshotRegex(R"(snapshot=(\d+))");
     QRegularExpression valueRegex(R"((\w+)=([\d]+))");
-     QRegularExpression detailedAllocRegex(R"(n\d+:\s+(\d+)\s+0x[0-9A-Fa-f]+:\s+([\w:<>~]+)\s+\(([^:]+):(\d+)\))");
+    QRegularExpression detailedAllocRegex(R"(n\d+:\s+(\d+)\s+0x[0-9A-Fa-f]+:\s+([\w:<>~]+)\s+\(([^:]+):(\d+)\))");
     QRegularExpression summaryAllocRegex(R"(n\d+:\s+(\d+)\s+\(.+\))");
 
     QTextStream in(&file);

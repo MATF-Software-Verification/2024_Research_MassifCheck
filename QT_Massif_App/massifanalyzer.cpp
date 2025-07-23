@@ -18,26 +18,6 @@ bool MassifAnalyzer::isMemoryStabilized(const QVector<Snapshot>& snapshots, int 
     return true;
 }
 
-QVector<FunctionAllocSummary> MassifAnalyzer::analyzeAllocationsPerFunction(const Snapshot& snapshot)
-{
-    QMap<QString, FunctionAllocSummary> summaryMap;
-    for (const AllocationEntry& entry: snapshot.allocations){
-        auto& summary = summaryMap[entry.function];
-        summary.function = entry.function;
-        summary.totalBytes += entry.bytes;
-        summary.count++;
-    }
-
-    QVector<FunctionAllocSummary> result = summaryMap.values();
-
-    // Sortiraj po veličini alokacije
-    std::sort(result.begin(), result.end(), [](const FunctionAllocSummary& a, const FunctionAllocSummary& b) {
-        return a.totalBytes > b.totalBytes;
-    });
-
-    return result;
-}
-
 QString MassifAnalyzer::detectMemoryLeaks(const QVector<Snapshot>& snapshots) {
     const double MEMORY_JUMP_THRESHOLD = 0.5; // 50%
     const qint64 LARGE_MEMORY_THRESHOLD = 1000000000; // 1 GB
@@ -120,7 +100,7 @@ QString MassifAnalyzer::detectMemoryLeaks(const QVector<Snapshot>& snapshots) {
             for (const AllocationEntry& alloc : snap.allocations) {
                 result += QString("%1 bytes in %2 at %3 : %4\n")
                               .arg(alloc.bytes)
-                              .arg(alloc.fu)
+                              .arg(alloc.function)
                               .arg(alloc.sourceFile)
                               .arg(alloc.line);
             }
