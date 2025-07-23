@@ -22,6 +22,7 @@ QString MassifAnalyzer::detectMemoryLeaks(const QVector<Snapshot>& snapshots) {
     const double MEMORY_JUMP_THRESHOLD = 0.5; // 50%
     const qint64 LARGE_MEMORY_THRESHOLD = 1000000000; // 1 GB
     const qint64 BYTES_TO_MB = 1024 * 1024;
+    const qint64 MEMORY_FREE_THRESHOLD = 4 * 1024; // 4 KB
 
     Snapshot previousSnapshot;
     bool hasPreviousSnapshot = false;
@@ -95,16 +96,26 @@ QString MassifAnalyzer::detectMemoryLeaks(const QVector<Snapshot>& snapshots) {
             hasPreviousSnapshot = true;
         }
 
-        if (!snap.allocations.isEmpty()) {
-            result += QString("Top allocations in snapshot %1\n").arg(snap.snapshot);
-            for (const AllocationEntry& alloc : snap.allocations) {
-                result += QString("%1 bytes in %2 at %3 : %4\n")
-                              .arg(alloc.bytes)
-                              .arg(alloc.function)
-                              .arg(alloc.sourceFile)
-                              .arg(alloc.line);
+        if (i == snapshots.size() - 1){
+            if (snap.mem_heap_B > MEMORY_FREE_THRESHOLD) {
+                result += QString("Warning: Memory not fully freed at the end! Heap usage: %1 bytes\n")
+                .arg(snap.mem_heap_B);
+            } else {
+                result += QString("Info: Memory fully freed at the end.\n");
             }
         }
+
+        // if (!snap.allocations.isEmpty()) {
+        //     result += QString("Top allocations in snapshot %1\n").arg(snap.snapshot);
+        //     for (const AllocationEntry& alloc : snap.allocations) {
+        //         result += QString("%1 bytes in %2 at %3 : %4\n")
+        //                       .arg(alloc.bytes)
+        //                       .arg(alloc.function)
+        //                       .arg(alloc.sourceFile)
+        //                       .arg(alloc.line);
+        //     }
+        // }
     }
+
     return result;
 }
