@@ -23,6 +23,7 @@ QString MassifAnalyzer::detectMemoryLeaks(const QVector<Snapshot>& snapshots) {
     const qint64 LARGE_MEMORY_THRESHOLD = 1000000000; // 1 GB
     const qint64 BYTES_TO_MB = 1024 * 1024;
     const qint64 MEMORY_FREE_THRESHOLD = 4 * 1024; // 4 KB
+    const double FRAGMENTATION_THRESHOLD = 0.10; // 10%
 
     Snapshot previousSnapshot;
     bool hasPreviousSnapshot = false;
@@ -94,6 +95,16 @@ QString MassifAnalyzer::detectMemoryLeaks(const QVector<Snapshot>& snapshots) {
         if (snap.mem_heap_B != 0 || snap.mem_stacks_B != 0 || snap.mem_heap_extra_B != 0) {
             previousSnapshot = snap;
             hasPreviousSnapshot = true;
+        }
+
+        if (snap.mem_heap_B > 0) { // da ne deliš sa nulom
+            double fragmentationRatio = static_cast<double>(snap.mem_heap_extra_B) / snap.mem_heap_B;
+
+            if (fragmentationRatio > FRAGMENTATION_THRESHOLD) {
+                result += QString("Warning: Possible heap fragmentation in snapshot %1: extra memory is %2% of heap\n")
+                .arg(snap.snapshot)
+                    .arg(fragmentationRatio * 100, 0, 'f', 2);
+            }
         }
 
         if (i == snapshots.size() - 1){
