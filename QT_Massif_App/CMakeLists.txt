@@ -36,6 +36,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         fileselector.h fileselector.cpp
         resultdialog.h resultdialog.cpp resultdialog.ui
         AllocationEntry.h
+        functionallocsummary.h
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET QT_Massif_App APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
