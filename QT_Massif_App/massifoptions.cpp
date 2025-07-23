@@ -21,6 +21,9 @@ QString MassifOptions::makeAdditionalArguments()
 
     aditionalArguments += "--max-snapshots=" + std::to_string(maxSnapshots) + " ";
 
+    //adding this because we want to analyze every snapshot and make suggestions based on the informations
+    aditionalArguments += "--detailed-freq=1 --alloc-fn=yes ";
+
     return aditionalArguments;
 }
 

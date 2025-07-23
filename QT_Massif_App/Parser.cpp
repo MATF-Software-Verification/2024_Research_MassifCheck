@@ -21,6 +21,7 @@ std::pair<QMap<QString, QString>, QVector<Snapshot>> Parser::parseMassifFile(con
     QRegularExpression headerRegex(R"((\w+):\s*(.+))");
     QRegularExpression snapshotRegex(R"(snapshot=(\d+))");
     QRegularExpression valueRegex(R"((\w+)=([\d]+))");
+    QRegularExpression allocRegex(R"(n\d+:\s+(\d+)\s+0x[0-9A-Fa-f]+:\s+(.+)\s+\((.+):(\d+)\))");
 
     QTextStream in(&file);
     while (!in.atEnd()) {
@@ -45,6 +46,18 @@ std::pair<QMap<QString, QString>, QVector<Snapshot>> Parser::parseMassifFile(con
             else if (key == "mem_heap_B") snapshot.mem_heap_B = value;
             else if (key == "mem_heap_extra_B") snapshot.mem_heap_extra_B = value;
             else if (key == "mem_stacks_B") snapshot.mem_stacks_B = value;
+        }
+        else if (line.startsWith("n")){
+            QRegularExpressionMatch allocMatch = allocRegex.match(line);
+            if (allocMatch.hasMatch()){
+                AllocationEntry entry;
+                entry.bytes = allocMatch.captured(1).toLongLong();
+                entry.function = allocMatch.captured(2);
+                entry.sourceFile = allocMatch.captured(3);
+                entry.line = allocMatch.captured(4).toInt();
+
+                snapshot.allocations.append(entry);
+            }
         }
     }
 
