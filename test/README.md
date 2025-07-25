@@ -45,3 +45,13 @@ This test case demonstrates a common memory management issue where a fixed-size 
 The massif graph shows a generally increasing trend in memory usage as the internal buffer fills up with log entries that are never removed. The gradual upward slope corresponds to continuous allocation without deallocation, reflecting the accumulation of messages. Occasional drops in the graph represent the points where the flush() method is called, clearing the buffer and releasing memory temporarily. However, the overall trend remains upward due to the absence of old message removal during logging, highlighting potential memory inefficiency.
 
 ![Image](https://github.com/user-attachments/assets/9f185c9f-c0df-42af-a27a-851d8a18cd68)
+
+## Test Case 4: `massif.out.4`
+
+**Purpose**:
+This test case is designed to simulate memory fragmentation by performing many small heap allocations with varying lifetimes and without proper reuse or compaction of freed memory. The goal is to trigger the fragmentation warning by increasing mem_heap_extra_B relative to mem_heap_B, representing inefficient use of heap space.
+
+**Graph Explanation**:
+The massif graph may not show a steep increase in total memory usage (`mem_heap_B`), but the internal metric `mem_heap_extra_B` grows significantly. This indicates that although not much memory is actively used by the program, a large portion of the heap remains unusable due to fragmentation. The analyzer detects this by comparing the ratio of `mem_heap_extra_B` to `mem_heap_B`, and if it exceeds a threshold (e.g., 10%), it issues a warning about possible fragmentation. This reflects a situation where freed memory cannot be reused efficiently, often caused by patterns of allocating and freeing blocks of different sizes and lifetimes.
+
+![test4](https://github.com/user-attachments/assets/acf13781-bba2-4318-b885-3f70e6fc4906)
