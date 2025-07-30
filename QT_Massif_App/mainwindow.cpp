@@ -64,10 +64,9 @@ void MainWindow::on_btExecute_clicked()
 
     // this if is a temporary solution until automatic compilation is developed (not only for binary)
     // should also refactor the runMassifCheck function so that it returns boolean = true if successful, so that can also be checked in the if
-    if(mode == BINARY){
-        massifSelector->setFileFromPath(newMassifFilePath, OUTPUT);
-        this->ui->leSelectedMassifOutFile->setText(QFileInfo(newMassifFilePath).fileName());
-    }
+
+    massifSelector->setFileFromPath(newMassifFilePath, OUTPUT);
+    this->ui->leSelectedMassifOutFile->setText(QFileInfo(newMassifFilePath).fileName());
 
 }
 
