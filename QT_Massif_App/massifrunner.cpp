@@ -107,6 +107,12 @@ QString MassifRunner::runMassifOutputAnalysis(FileSelector& fileSelector) {
 
     MassifAnalyzer analyzer;
     QString text = analyzer.detectMemoryLeaks(snapshots);
+    auto functionSummary = parser.summarizeAllocationsByFunction(snapshots);
+
+    for (const auto& summary : functionSummary) {
+        qDebug() << summary.function << "allocated" << summary.totalBytes << "bytes in"
+                 << summary.count << "entries.";
+    }
 
     QMessageBox::information(nullptr, "Analysis", "Memory analysis completed. Press OK for results.");
     return text;

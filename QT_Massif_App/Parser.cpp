@@ -34,6 +34,7 @@ std::pair<QMap<QString, QString>, QVector<Snapshot>> Parser::parseMassifFile(con
             QRegularExpression detailedAllocRegex(R"(n\d+:\s+(\d+)\s+0x[0-9A-Fa-f]+:\s+(.+)\s+\((.+):(\d+)\))");
             // (npr. "n1: 4000 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.")
             QRegularExpression summaryAllocRegex(R"(n\d+:\s+(\d+)\s+\(.+\))");
+            static QRegularExpression stdlibFunctionRegex(R"(^(std::|__|_Z|boost::))");
 
             QRegularExpressionMatch match;
 
@@ -44,8 +45,18 @@ std::pair<QMap<QString, QString>, QVector<Snapshot>> Parser::parseMassifFile(con
                 entry.sourceFile = match.captured(3);
                 entry.line = match.captured(4).toInt();
 
-                std::cout << entry.bytes << " bytes, " << entry.function.toStdString()
-                          << " " << entry.sourceFile.toStdString() << ":" << entry.line << std::endl;
+                //std::cout << entry.bytes << " bytes, " << entry.function.toStdString()
+                //          << " " << entry.sourceFile.toStdString() << ":" << entry.line << std::endl;
+
+                bool isFromStdLib = stdlibFunctionRegex.match(entry.function).hasMatch();
+                bool hasValidSourceFile = !entry.sourceFile.isEmpty()
+                                          && (entry.sourceFile.endsWith(".cpp") || entry.sourceFile.endsWith(".cc")
+                                              || entry.sourceFile.endsWith(".c") || entry.sourceFile.endsWith(".hpp")
+                                              || entry.sourceFile.endsWith(".h"));
+
+                if (isFromStdLib || !hasValidSourceFile) {
+                    continue; // skip this entry
+                }
 
                 snapshot.allocations.append(entry);
             }
@@ -56,7 +67,7 @@ std::pair<QMap<QString, QString>, QVector<Snapshot>> Parser::parseMassifFile(con
                 entry.sourceFile = "";
                 entry.line = 0;
 
-                std::cout << entry.bytes << " bytes, summary allocation line" << std::endl;
+                //std::cout << entry.bytes << " bytes, summary allocation line" << std::endl;
 
                 snapshot.allocations.append(entry);
             }
@@ -92,4 +103,24 @@ std::pair<QMap<QString, QString>, QVector<Snapshot>> Parser::parseMassifFile(con
 
     file.close();
     return {header, snapshots};
+}
+
+
+// this function groups allocations with functions summing the amount of memory allocated in those functions
+// the problem is right now we have every function mentioned, and in more complex programs that will include STL etc..
+QMap<QString, FunctionAllocSummary> Parser::summarizeAllocationsByFunction(const QVector<Snapshot>& snapshots) {
+    QMap<QString, FunctionAllocSummary> functionTotals;
+
+    for (const auto& snapshot : snapshots) {
+        for (const auto& alloc : snapshot.allocations) {
+            if (alloc.function == "(summary)") continue; // skip summary lines
+
+            auto& summary = functionTotals[alloc.function];
+            summary.function = alloc.function;
+            summary.totalBytes += alloc.bytes;
+            summary.count += 1;
+        }
+    }
+
+    return functionTotals;
 }
