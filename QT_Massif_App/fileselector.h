@@ -18,6 +18,8 @@ public:
 
     inline QString getFileName() const { return this->fileName; };
     inline QString getFilePath() const { return this->filePath; };
+    inline void setFileName(QString name) { fileName = name; }
+    inline void setFilePath(QString path) { filePath = path; }
     inline QString getOutFileName() const {return this->outFileName;};
     inline QString getOutFilePath() const {return this->outFilePath;};
 
