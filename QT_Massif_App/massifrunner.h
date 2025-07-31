@@ -30,7 +30,7 @@ public:
 
     QString convertWindowsPathToWsl(const QString& winPath);
     QString getMassifFilesDir();
-    void runMassifCheck(FileSelector& fileSelector, Mode mode);
+    bool runMassifCheck(FileSelector& fileSelector, Mode mode);
     QString getNextMassifOutFilePath();
     void setMassifOptions(MassifOptions* options);
     QString runMassifOutputAnalysis(FileSelector& fileSelector);

@@ -50,7 +50,7 @@ QString MassifRunner::getMassifFilesDir() {
     return massifPath;
 }
 
-void MassifRunner::runMassifCheck(FileSelector& fileSelector, Mode mode){
+bool MassifRunner::runMassifCheck(FileSelector& fileSelector, Mode mode){
     args.clear();
 
     if ( mode == COMPILE ){
@@ -89,8 +89,11 @@ void MassifRunner::runMassifCheck(FileSelector& fileSelector, Mode mode){
         bool started = QProcess::startDetached("cmd.exe", args);
         if (!started) {
             QMessageBox::warning(nullptr, "Error", "Failed to launch Valgrind in terminal.");
+            return false;
         }
     }
+
+    return true;
 }
 
 QString MassifRunner::runMassifOutputAnalysis(FileSelector& fileSelector) {
