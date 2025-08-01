@@ -130,3 +130,42 @@ QString MassifAnalyzer::detectMemoryLeaks(const QVector<Snapshot>& snapshots) {
 
     return result;
 }
+
+QString MassifAnalyzer::generateFunctionAllocationReport(const QMap<QString, FunctionAllocSummary>& functionSummary) {
+    const qint64 HIGH_MEMORY_THRESHOLD = 100 * 1024 * 1024; // 100 MB
+    const int HIGH_ALLOCATION_COUNT = 10;
+    const qint64 SMALL_TOTAL_ALLOCATION = 5 * 1024 * 1024; // 5 MB
+
+    QString result;
+
+    for (auto it = functionSummary.constBegin(); it != functionSummary.constEnd(); ++it) {
+        const FunctionAllocSummary& summary = it.value();
+
+        result += QString("Function '%1' allocated total %2 bytes in %3 allocations.\n")
+                      .arg(summary.function)
+                      .arg(summary.totalBytes)
+                      .arg(summary.count);
+
+        // Warn if a function allocates a lot of memory
+        if (summary.totalBytes > HIGH_MEMORY_THRESHOLD) {
+            result += QString("Warning: Function '%1' is responsible for a large memory allocation (over 100MB).\n")
+            .arg(summary.function);
+        }
+
+        if (summary.count > HIGH_ALLOCATION_COUNT) {
+            if (summary.totalBytes < SMALL_TOTAL_ALLOCATION) {
+                result += QString("Note: Function '%1' performs many small allocations (%2); consider optimizing with preallocation or pooling.\n")
+                .arg(summary.function)
+                    .arg(summary.count);
+            } else {
+                result += QString("Note: Function '%1' performs many allocations (%2); consider checking for inefficiencies.\n")
+                .arg(summary.function)
+                    .arg(summary.count);
+            }
+        }
+
+        result += "\n";
+    }
+
+    return result;
+}

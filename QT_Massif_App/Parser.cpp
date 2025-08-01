@@ -34,7 +34,7 @@ std::pair<QMap<QString, QString>, QVector<Snapshot>> Parser::parseMassifFile(con
             QRegularExpression detailedAllocRegex(R"(n\d+:\s+(\d+)\s+0x[0-9A-Fa-f]+:\s+(.+)\s+\((.+):(\d+)\))");
             // (npr. "n1: 4000 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.")
             QRegularExpression summaryAllocRegex(R"(n\d+:\s+(\d+)\s+\(.+\))");
-            static QRegularExpression stdlibFunctionRegex(R"(^(std::|__|_Z|boost::))");
+            static QRegularExpression stdlibFunctionRegex(R"(^(std::|__gnu_cxx::|boost::|__|_Z|_IO_|_dl_|call_init|construct<|operator new|operator delete))");
 
             QRegularExpressionMatch match;
 

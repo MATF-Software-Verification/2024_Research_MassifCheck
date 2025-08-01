@@ -16,6 +16,7 @@ public:
     bool isMemoryStabilized(const QVector<Snapshot>& snapshots, int currentIndex, int windowSize = 3);
     QVector<FunctionAllocSummary> analyzeAllocationsPerFunction(const Snapshot& snapshot);
     QString detectMemoryLeaks(const QVector<Snapshot>& snapshots);
+    QString generateFunctionAllocationReport(const QMap<QString, FunctionAllocSummary>& functionSummary);
 };
 
 #endif // MASSIFANALYZER_H
