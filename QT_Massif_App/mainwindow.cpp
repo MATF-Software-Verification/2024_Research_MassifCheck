@@ -60,11 +60,7 @@ void MainWindow::on_btExecute_clicked()
     }
 
     QString newMassifFilePath = massifRunner->getNextMassifOutFilePath();
-    massifRunner->runMassifCheck(*fileSelector, mode);
-
-    // this if is a temporary solution until automatic compilation is developed (not only for binary)
-    // should also refactor the runMassifCheck function so that it returns boolean = true if successful, so that can also be checked in the if
-    if(mode == BINARY){
+    if ( massifRunner->runMassifCheck(*fileSelector, mode) ){
         massifSelector->setFileFromPath(newMassifFilePath, OUTPUT);
         this->ui->leSelectedMassifOutFile->setText(QFileInfo(newMassifFilePath).fileName());
     }
@@ -84,6 +80,10 @@ void MainWindow::on_btMassifOptions_clicked()
 void MainWindow::setMassifOptions(MassifOptions *options)
 {
     massifRunner->setMassifOptions(options);
+}
+
+void MainWindow::setMassifAnalyzerThresholds(MassifAnalyzerThresholds *thresholds){
+    massifRunner->setMassifAnalyzerThresholds(thresholds);
 }
 
 
@@ -111,4 +111,15 @@ void MainWindow::on_btShowResult_clicked()
     dialog.exec();
 }
 
+
+
+void MainWindow::on_btMassifAnalyzerParameters_clicked()
+{
+    MassifAnalyzerThresholdsWindow massifAnalyzerThresholdsWindow;
+    massifAnalyzerThresholdsWindow.setThresholdsFields(massifRunner->getThresholds());
+
+    QObject::connect(&massifAnalyzerThresholdsWindow, &MassifAnalyzerThresholdsWindow::thresholdsChanged, this, &MainWindow::setMassifAnalyzerThresholds);
+
+    massifAnalyzerThresholdsWindow.exec();
+}
 

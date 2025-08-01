@@ -18,10 +18,12 @@ bool MassifAnalyzer::isMemoryStabilized(const QVector<Snapshot>& snapshots, int 
     return true;
 }
 
-QString MassifAnalyzer::detectMemoryLeaks(const QVector<Snapshot>& snapshots) {
-    const double MEMORY_JUMP_THRESHOLD = 0.5; // 50%
-    const qint64 LARGE_MEMORY_THRESHOLD = 1000000000; // 1 GB
+QString MassifAnalyzer::detectMemoryLeaks(const QVector<Snapshot>& snapshots, MassifAnalyzerThresholds *thresholds) {
+    const double MEMORY_JUMP_THRESHOLD = thresholds->memoryJumpThreshold; //0.5; // 50%
+    const qint64 LARGE_MEMORY_THRESHOLD = thresholds->largeMemoryThreshold; //1000000000; // 1 GB
     const qint64 BYTES_TO_MB = 1024 * 1024;
+    const qint64 MEMORY_FREE_THRESHOLD = thresholds->memoryFreeThreshold; //4 * 1024; // 4 KB
+    const double FRAGMENTATION_THRESHOLD = thresholds->fragmentationThreshold; //0.10; // 10%
 
     Snapshot previousSnapshot;
     bool hasPreviousSnapshot = false;
@@ -94,6 +96,76 @@ QString MassifAnalyzer::detectMemoryLeaks(const QVector<Snapshot>& snapshots) {
             previousSnapshot = snap;
             hasPreviousSnapshot = true;
         }
+
+        if (snap.mem_heap_B > 0) { // da ne deliš sa nulom
+            double fragmentationRatio = static_cast<double>(snap.mem_heap_extra_B) / snap.mem_heap_B;
+
+            if (fragmentationRatio > FRAGMENTATION_THRESHOLD) {
+                result += QString("Warning: Possible heap fragmentation in snapshot %1: extra memory is %2% of heap\n")
+                .arg(snap.snapshot)
+                    .arg(fragmentationRatio * 100, 0, 'f', 2);
+            }
+        }
+
+        if (i == snapshots.size() - 1){
+            if (snap.mem_heap_B > MEMORY_FREE_THRESHOLD) {
+                result += QString("Warning: Memory not fully freed at the end! Heap usage: %1 bytes\n")
+                .arg(snap.mem_heap_B);
+            } else {
+                result += QString("Info: Memory fully freed at the end.\n");
+            }
+        }
+
+        // if (!snap.allocations.isEmpty()) {
+        //     result += QString("Top allocations in snapshot %1\n").arg(snap.snapshot);
+        //     for (const AllocationEntry& alloc : snap.allocations) {
+        //         result += QString("%1 bytes in %2 at %3 : %4\n")
+        //                       .arg(alloc.bytes)
+        //                       .arg(alloc.function)
+        //                       .arg(alloc.sourceFile)
+        //                       .arg(alloc.line);
+        //     }
+        // }
     }
+
+    return result;
+}
+
+QString MassifAnalyzer::generateFunctionAllocationReport(const QMap<QString, FunctionAllocSummary>& functionSummary, MassifAnalyzerThresholds *thresholds) {
+    const qint64 HIGH_MEMORY_THRESHOLD = thresholds->highMemoryThreshold; // 100 * 1024 * 1024; // 100 MB
+    const int HIGH_ALLOCATION_COUNT = thresholds->highAllocationCount; //10;
+    const qint64 SMALL_TOTAL_ALLOCATION = thresholds->smallTotalAllocation; //5 * 1024 * 1024; // 5 MB
+
+    QString result;
+
+    for (auto it = functionSummary.constBegin(); it != functionSummary.constEnd(); ++it) {
+        const FunctionAllocSummary& summary = it.value();
+
+        result += QString("Function '%1' allocated total %2 bytes in %3 allocations.\n")
+                      .arg(summary.function)
+                      .arg(summary.totalBytes)
+                      .arg(summary.count);
+
+        // Warn if a function allocates a lot of memory
+        if (summary.totalBytes > HIGH_MEMORY_THRESHOLD) {
+            result += QString("Warning: Function '%1' is responsible for a large memory allocation (over 100MB).\n")
+            .arg(summary.function);
+        }
+
+        if (summary.count > HIGH_ALLOCATION_COUNT) {
+            if (summary.totalBytes < SMALL_TOTAL_ALLOCATION) {
+                result += QString("Note: Function '%1' performs many small allocations (%2); consider optimizing with preallocation or pooling.\n")
+                .arg(summary.function)
+                    .arg(summary.count);
+            } else {
+                result += QString("Note: Function '%1' performs many allocations (%2); consider checking for inefficiencies.\n")
+                .arg(summary.function)
+                    .arg(summary.count);
+            }
+        }
+
+        result += "\n";
+    }
+
     return result;
 }

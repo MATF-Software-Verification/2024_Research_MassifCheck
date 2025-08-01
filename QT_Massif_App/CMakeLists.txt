@@ -20,6 +20,8 @@ set(PROJECT_SOURCES
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+    find_package(Qt6 REQUIRED COMPONENTS Core)
+
     qt_add_executable(QT_Massif_App
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
@@ -35,6 +37,11 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         TimeUnit.h
         fileselector.h fileselector.cpp
         resultdialog.h resultdialog.cpp resultdialog.ui
+        AllocationEntry.h
+        functionallocsummary.h
+        massifanalyzerthresholds.h massifanalyzerthresholds.cpp
+        massifanalyzerthresholdswindow.h massifanalyzerthresholdswindow.cpp massifanalyzerthresholdswindow.ui
+
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET QT_Massif_App APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -55,6 +62,7 @@ else()
 endif()
 
 target_link_libraries(QT_Massif_App PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(QT_Massif_App PRIVATE Qt6::Core)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
