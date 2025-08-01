@@ -1,0 +1,34 @@
+name: Verify test files on Linux runner
+
+on: [push, pull_request]
+
+jobs:
+  check-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Check all test files listed in run_massif_on_tests.sh
+        run: |
+          echo "🔍 Listing all test files in ./test/:"
+          test_files=$(find ./test -maxdepth 1 -type f \( -name 'test*.c' -o -name 'test*.cpp' \) -exec basename {} \;)
+          echo "$test_files"
+
+          echo "🔍 Extracting TEST_FILES array from run_massif_on_tests.sh..."
+          array_line=$(grep -oP 'TEST_FILES=\(\K[^\)]+' ./run_massif_on_tests.sh)
+          echo "$array_line"
+
+          missing=0
+          for f in $test_files; do
+            if ! echo "$array_line" | grep -qw "$f"; then
+              echo "❌ File '$f' is NOT listed in TEST_FILES array in run_massif_on_tests.sh"
+              missing=1
+            fi
+          done
+
+          if [ "$missing" -eq 1 ]; then
+            echo "❌ Some test files are missing from the TEST_FILES array!"
+            exit 1
+          else
+            echo "✅ All test files are properly listed in TEST_FILES array."
+          fi
