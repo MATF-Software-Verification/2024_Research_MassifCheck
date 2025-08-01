@@ -82,6 +82,10 @@ void MainWindow::setMassifOptions(MassifOptions *options)
     massifRunner->setMassifOptions(options);
 }
 
+void MainWindow::setMassifAnalyzerThresholds(MassifAnalyzerThresholds *thresholds){
+    massifRunner->setMassifAnalyzerThresholds(thresholds);
+}
+
 
 void MainWindow::on_btLoadMassifOutFile_clicked()
 {
@@ -107,4 +111,15 @@ void MainWindow::on_btShowResult_clicked()
     dialog.exec();
 }
 
+
+
+void MainWindow::on_btMassifAnalyzerParameters_clicked()
+{
+    MassifAnalyzerThresholdsWindow massifAnalyzerThresholdsWindow;
+    massifAnalyzerThresholdsWindow.setThresholdsFields(massifRunner->getThresholds());
+
+    QObject::connect(&massifAnalyzerThresholdsWindow, &MassifAnalyzerThresholdsWindow::thresholdsChanged, this, &MainWindow::setMassifAnalyzerThresholds);
+
+    massifAnalyzerThresholdsWindow.exec();
+}
 

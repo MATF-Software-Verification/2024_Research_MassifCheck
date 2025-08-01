@@ -18,12 +18,12 @@ bool MassifAnalyzer::isMemoryStabilized(const QVector<Snapshot>& snapshots, int 
     return true;
 }
 
-QString MassifAnalyzer::detectMemoryLeaks(const QVector<Snapshot>& snapshots) {
-    const double MEMORY_JUMP_THRESHOLD = 0.5; // 50%
-    const qint64 LARGE_MEMORY_THRESHOLD = 1000000000; // 1 GB
+QString MassifAnalyzer::detectMemoryLeaks(const QVector<Snapshot>& snapshots, MassifAnalyzerThresholds *thresholds) {
+    const double MEMORY_JUMP_THRESHOLD = thresholds->memoryJumpThreshold; //0.5; // 50%
+    const qint64 LARGE_MEMORY_THRESHOLD = thresholds->largeMemoryThreshold; //1000000000; // 1 GB
     const qint64 BYTES_TO_MB = 1024 * 1024;
-    const qint64 MEMORY_FREE_THRESHOLD = 4 * 1024; // 4 KB
-    const double FRAGMENTATION_THRESHOLD = 0.10; // 10%
+    const qint64 MEMORY_FREE_THRESHOLD = thresholds->memoryFreeThreshold; //4 * 1024; // 4 KB
+    const double FRAGMENTATION_THRESHOLD = thresholds->fragmentationThreshold; //0.10; // 10%
 
     Snapshot previousSnapshot;
     bool hasPreviousSnapshot = false;
@@ -131,10 +131,10 @@ QString MassifAnalyzer::detectMemoryLeaks(const QVector<Snapshot>& snapshots) {
     return result;
 }
 
-QString MassifAnalyzer::generateFunctionAllocationReport(const QMap<QString, FunctionAllocSummary>& functionSummary) {
-    const qint64 HIGH_MEMORY_THRESHOLD = 100 * 1024 * 1024; // 100 MB
-    const int HIGH_ALLOCATION_COUNT = 10;
-    const qint64 SMALL_TOTAL_ALLOCATION = 5 * 1024 * 1024; // 5 MB
+QString MassifAnalyzer::generateFunctionAllocationReport(const QMap<QString, FunctionAllocSummary>& functionSummary, MassifAnalyzerThresholds *thresholds) {
+    const qint64 HIGH_MEMORY_THRESHOLD = thresholds->highMemoryThreshold; // 100 * 1024 * 1024; // 100 MB
+    const int HIGH_ALLOCATION_COUNT = thresholds->highAllocationCount; //10;
+    const qint64 SMALL_TOTAL_ALLOCATION = thresholds->smallTotalAllocation; //5 * 1024 * 1024; // 5 MB
 
     QString result;
 

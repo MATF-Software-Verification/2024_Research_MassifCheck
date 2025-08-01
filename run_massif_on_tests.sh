@@ -1,7 +1,7 @@
 #!/bin/bash
 
 TEST_DIR="test"
-TEST_FILES=("test1.c" "test2.c" "test3.cpp" "test4.cpp")
+TEST_FILES=("test1.c" "test2.c" "test3.cpp" "test4.cpp" "test5.cpp")
 OUTPUT_DIR="massif_files"
 OUTPUT_FILE_BASE="massif.out"
 

@@ -7,6 +7,7 @@ MassifRunner::MassifRunner(QObject *parent)
     : QObject{parent}
     , process(new QProcess(this))
     , massifOptions(new MassifOptions(this))
+    , massifAnalyzerThresholds(new MassifAnalyzerThresholds(this))
 {}
 
 MassifRunner::~MassifRunner() = default;
@@ -106,9 +107,9 @@ QString MassifRunner::runMassifOutputAnalysis(FileSelector& fileSelector) {
     }
 
     MassifAnalyzer analyzer;
-    QString text = analyzer.detectMemoryLeaks(snapshots);
+    QString text = analyzer.detectMemoryLeaks(snapshots, this->massifAnalyzerThresholds);
     auto functionSummary = parser.summarizeAllocationsByFunction(snapshots);
-    text += "\n" + analyzer.generateFunctionAllocationReport(functionSummary);
+    text += "\n" + analyzer.generateFunctionAllocationReport(functionSummary, this->massifAnalyzerThresholds);
 
     QMessageBox::information(nullptr, "Analysis", "Memory analysis completed. Press OK for results.");
     return text;
@@ -173,4 +174,9 @@ void MassifRunner::setMassifOptions(MassifOptions *options)
     massifOptions->includeStackProfiling = options->includeStackProfiling;
     massifOptions->timeUnit = options->timeUnit;
     massifOptions->maxSnapshots = options->maxSnapshots;
+}
+
+void MassifRunner::setMassifAnalyzerThresholds(MassifAnalyzerThresholds *thresholds){
+    this->massifAnalyzerThresholds->setThresholds(thresholds);
+    delete(thresholds);
 }

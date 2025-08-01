@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "massifrunner.h"
 #include "massifoptionswindow.h"
+#include "massifanalyzerthresholdswindow.h"
 #include "massifoptions.h"
 #include "fileselector.h"
 #include "massifanalyzer.h"
@@ -31,10 +32,13 @@ private slots:
 
     void on_btMassifOptions_clicked();
     void setMassifOptions(MassifOptions* options);
+    void setMassifAnalyzerThresholds(MassifAnalyzerThresholds *thresholds);
 
     void on_btLoadMassifOutFile_clicked();
 
     void on_btShowResult_clicked();
+
+    void on_btMassifAnalyzerParameters_clicked();
 
 private:
     Ui::MainWindow *ui;

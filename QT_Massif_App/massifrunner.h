@@ -13,6 +13,7 @@
 #include "fileselector.h"
 #include "massifanalyzer.h"
 #include "massifoptions.h"
+#include "massifanalyzerthresholds.h"
 
 
 class MassifRunner : public QObject
@@ -24,8 +25,8 @@ public:
 
     QProcess *process;
 
-    inline QStringList getArgs() {return this->args; };
-    inline void addArg(QString arg) { args << arg; };
+    inline QStringList getArgs() {return this->args; }
+    inline void addArg(QString arg) { args << arg; }
 
 
     QString convertWindowsPathToWsl(const QString& winPath);
@@ -33,8 +34,11 @@ public:
     bool runMassifCheck(FileSelector& fileSelector, Mode mode);
     QString getNextMassifOutFilePath();
     void setMassifOptions(MassifOptions* options);
+    void setMassifAnalyzerThresholds(MassifAnalyzerThresholds *thresholds);
     QString runMassifOutputAnalysis(FileSelector& fileSelector);
     QString MassifGraphUsingMsPrint(const FileSelector& massifSelector);
+
+    inline MassifAnalyzerThresholds* getThresholds(){return massifAnalyzerThresholds;}
 
 private:
     Mode mode = COMPILE;
@@ -42,8 +46,8 @@ private:
     QStringList args;
 
     MassifOptions* massifOptions;
+    MassifAnalyzerThresholds* massifAnalyzerThresholds;
 
-signals:
 };
 
 #endif // MASSIFRUNNER_H
