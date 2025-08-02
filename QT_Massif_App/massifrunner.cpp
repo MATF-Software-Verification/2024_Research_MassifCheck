@@ -174,6 +174,8 @@ void MassifRunner::setMassifOptions(MassifOptions *options)
     massifOptions->includeStackProfiling = options->includeStackProfiling;
     massifOptions->timeUnit = options->timeUnit;
     massifOptions->maxSnapshots = options->maxSnapshots;
+
+    delete options;
 }
 
 void MassifRunner::setMassifAnalyzerThresholds(MassifAnalyzerThresholds *thresholds){

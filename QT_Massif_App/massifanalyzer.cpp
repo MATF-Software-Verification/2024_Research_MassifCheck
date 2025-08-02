@@ -97,7 +97,7 @@ QString MassifAnalyzer::detectMemoryLeaks(const QVector<Snapshot>& snapshots, Ma
             hasPreviousSnapshot = true;
         }
 
-        if (snap.mem_heap_B > 0) { // da ne deliš sa nulom
+        if (snap.mem_heap_B > 0) { // not to divide with 0
             double fragmentationRatio = static_cast<double>(snap.mem_heap_extra_B) / snap.mem_heap_B;
 
             if (fragmentationRatio > FRAGMENTATION_THRESHOLD) {

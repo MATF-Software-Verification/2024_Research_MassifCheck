@@ -2,6 +2,7 @@
 #define MASSIFANALYZERTHRESHOLDSWINDOW_H
 
 #include <QDialog>
+#include <QStyle>
 #include "massifanalyzerthresholds.h"
 
 namespace Ui {

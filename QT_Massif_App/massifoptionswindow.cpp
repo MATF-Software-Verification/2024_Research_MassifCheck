@@ -29,6 +29,23 @@ MassifOptionsWindow::~MassifOptionsWindow()
     delete ui;
 }
 
+void MassifOptionsWindow::setOptionsFields(MassifOptions *options)
+{
+    options->includeHeapProfiling ? ui->rbHeapYes->setChecked(true) : ui->rbHeapNo->setChecked(true);
+    options->includeStackProfiling ? ui->rbStackYes->setChecked(true) : ui->rbStackNo->setChecked(true);
+    if (options->timeUnit == MILISECONDS){
+        ui->rbTimeUnitMs->setChecked(true);
+    }
+    else if (options->timeUnit == BYTES){
+        ui->rbTimeUnitB->setChecked(true);
+    }
+    else {
+        ui->rbTimeUnitI->setChecked(true);
+    }
+
+    ui->sbMaxSnapshots->setValue(options->maxSnapshots);
+}
+
 void MassifOptionsWindow::on_buttonBox_accepted()
 {
     MassifOptions* options = new MassifOptions();

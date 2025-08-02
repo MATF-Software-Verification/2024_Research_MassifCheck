@@ -71,6 +71,7 @@ void MainWindow::on_btExecute_clicked()
 void MainWindow::on_btMassifOptions_clicked()
 {
     MassifOptionsWindow massifOptionsWindow;
+    massifOptionsWindow.setOptionsFields(massifRunner->getOptions());
 
     QObject::connect(&massifOptionsWindow, &MassifOptionsWindow::optionsChanged, this, &MainWindow::setMassifOptions);
 
