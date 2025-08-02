@@ -7,6 +7,7 @@ MassifRunner::MassifRunner(QObject *parent)
     : QObject{parent}
     , process(new QProcess(this))
     , massifOptions(new MassifOptions(this))
+    , massifAnalyzerThresholds(new MassifAnalyzerThresholds(this))
 {}
 
 MassifRunner::~MassifRunner() = default;
@@ -50,7 +51,7 @@ QString MassifRunner::getMassifFilesDir() {
     return massifPath;
 }
 
-void MassifRunner::runMassifCheck(FileSelector& fileSelector, Mode mode){
+bool MassifRunner::runMassifCheck(FileSelector& fileSelector, Mode mode){
     args.clear();
 
     if ( mode == COMPILE ){
@@ -69,8 +70,12 @@ void MassifRunner::runMassifCheck(FileSelector& fileSelector, Mode mode){
         QMessageBox msgBox;
         msgBox.setText("Compile finished!");
         msgBox.exec();
+
+        fileSelector.setFileName(fileSelector.getOutFileName());
+        fileSelector.setFilePath(fileSelector.getOutFilePath() + fileSelector.getOutFileName());
+        mode = BINARY;
     }
-    else if ( mode == BINARY){
+    if ( mode == BINARY){
         QString massifOut = convertWindowsPathToWsl(getNextMassifOutFilePath());
         QString exePath = convertWindowsPathToWsl(fileSelector.getFilePath());
 
@@ -85,8 +90,11 @@ void MassifRunner::runMassifCheck(FileSelector& fileSelector, Mode mode){
         bool started = QProcess::startDetached("cmd.exe", args);
         if (!started) {
             QMessageBox::warning(nullptr, "Error", "Failed to launch Valgrind in terminal.");
+            return false;
         }
     }
+
+    return true;
 }
 
 QString MassifRunner::runMassifOutputAnalysis(FileSelector& fileSelector) {
@@ -99,7 +107,9 @@ QString MassifRunner::runMassifOutputAnalysis(FileSelector& fileSelector) {
     }
 
     MassifAnalyzer analyzer;
-    QString text = analyzer.detectMemoryLeaks(snapshots);
+    QString text = analyzer.detectMemoryLeaks(snapshots, this->massifAnalyzerThresholds);
+    auto functionSummary = parser.summarizeAllocationsByFunction(snapshots);
+    text += "\n" + analyzer.generateFunctionAllocationReport(functionSummary, this->massifAnalyzerThresholds);
 
     QMessageBox::information(nullptr, "Analysis", "Memory analysis completed. Press OK for results.");
     return text;
@@ -164,4 +174,9 @@ void MassifRunner::setMassifOptions(MassifOptions *options)
     massifOptions->includeStackProfiling = options->includeStackProfiling;
     massifOptions->timeUnit = options->timeUnit;
     massifOptions->maxSnapshots = options->maxSnapshots;
+}
+
+void MassifRunner::setMassifAnalyzerThresholds(MassifAnalyzerThresholds *thresholds){
+    this->massifAnalyzerThresholds->setThresholds(thresholds);
+    delete(thresholds);
 }

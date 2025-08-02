@@ -16,7 +16,7 @@ valgrind --tool=massif --massif-out-file=massif.out.1 ./program
 
 In this section, we describe different test cases that were used to analyze memory usage. The memory usage data is captured using Massif and visualized through graphs. Screenshots of these graphs are included below for clarity.
 
-## Test Case 1: `massif.out.1`
+## Test Case 1: `massif.out.0`
 
 **Purpose**: This test case is used to simulate a scenario where memory usage is relatively stable. The graph shows memory consumption over time, with specific points where the memory usage increases gradually, eventually stabilizing.
 
@@ -26,7 +26,7 @@ The graph below shows memory usage (in KB) over the course of the program's exec
 ![Screenshot from 2025-01-03 23-59-53](https://github.com/user-attachments/assets/9bd2a3f3-4b4f-4835-9c24-a7c6f5874d41)
 
 
-## Test Case 2: `massif.out.2`
+## Test Case 2: `massif.out.1`
 
 **Purpose**: This test case is designed to simulate scenarios with sudden spikes in memory usage, allowing us to test the functionality of detecting abrupt jumps in memory consumption.
 
@@ -36,7 +36,7 @@ In this graph, the vertical spikes represent sudden increases in memory usage. T
 
 ![Screenshot from 2025-01-04 00-00-44](https://github.com/user-attachments/assets/adb07cd0-e2fd-47f9-b58c-ca72f99d3c04)
 
-## Test Case 3: `massif.out.3`
+## Test Case 3: `massif.out.2`
 
 **Purpose**:
 This test case demonstrates a common memory management issue where a fixed-size buffer continuously accumulates data without removing old entries, simulating a memory leak or unbounded growth scenario. The goal is to analyze how memory usage grows steadily over time when old data is not properly discarded, and to identify the impact of periodic clearing (flush) on memory consumption.
@@ -45,3 +45,23 @@ This test case demonstrates a common memory management issue where a fixed-size 
 The massif graph shows a generally increasing trend in memory usage as the internal buffer fills up with log entries that are never removed. The gradual upward slope corresponds to continuous allocation without deallocation, reflecting the accumulation of messages. Occasional drops in the graph represent the points where the flush() method is called, clearing the buffer and releasing memory temporarily. However, the overall trend remains upward due to the absence of old message removal during logging, highlighting potential memory inefficiency.
 
 ![Image](https://github.com/user-attachments/assets/9f185c9f-c0df-42af-a27a-851d8a18cd68)
+
+## Test Case 4: `massif.out.3`
+
+**Purpose**:
+This test case is designed to simulate memory fragmentation by performing many small heap allocations with varying lifetimes and without proper reuse or compaction of freed memory. The goal is to trigger the fragmentation warning by increasing mem_heap_extra_B relative to mem_heap_B, representing inefficient use of heap space.
+
+**Graph Explanation**:
+The massif graph may not show a steep increase in total memory usage (`mem_heap_B`), but the internal metric `mem_heap_extra_B` grows significantly. This indicates that although not much memory is actively used by the program, a large portion of the heap remains unusable due to fragmentation. The analyzer detects this by comparing the ratio of `mem_heap_extra_B` to `mem_heap_B`, and if it exceeds a threshold (e.g., 10%), it issues a warning about possible fragmentation. This reflects a situation where freed memory cannot be reused efficiently, often caused by patterns of allocating and freeing blocks of different sizes and lifetimes.
+
+![test4](https://github.com/user-attachments/assets/acf13781-bba2-4318-b885-3f70e6fc4906)
+
+## Test Case 5: `massif.out.4`
+
+**Purpose**:
+This test case combines different allocation patterns to demonstrate their cumulative effect on memory usage. It includes one very large allocation (150 MB), many small individual allocations (1500 ints), and a large number of moderate-sized allocations (2000 strings of 1 KB each). The goal is to trigger warnings for both large and frequent allocations, illustrating how different allocation behaviors contribute to total memory consumption.
+
+**Graph Explanation**:
+The massif graph shows a sudden large spike in memory usage early in the run, reflecting the combined effect of all allocations made by the program. Rather than multiple smaller increases, memory usage jumps rapidly to a high level and stays roughly constant until near program termination. This “rectangular” shape results from the large allocation alongside the many smaller allocations, all held live simultaneously, causing total heap usage to remain elevated throughout execution.
+
+![test5](https://github.com/user-attachments/assets/496d3005-92bc-47cb-9027-c439174a80b0)
