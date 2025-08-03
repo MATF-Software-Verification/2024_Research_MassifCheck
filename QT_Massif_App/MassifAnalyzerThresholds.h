@@ -19,6 +19,7 @@ public:
     qint64 largeMemoryThreshold = 1000000000;              // 1 GB
     qint64 memoryFreeThreshold = 4 * 1024;                 // 4 KB
     double fragmentationThreshold = 0.10;                  // 10%
+    int stabilizationWindowSize = 3;
 
     void setThresholds(MassifAnalyzerThresholds *thresholds);
 
