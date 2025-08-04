@@ -9,7 +9,7 @@
 - Select a compiled binary to analyze
 - Run Valgrind's Massif tool with custom options
 - Parse Massif output
-- (In Progress) Visualize heap memory usage
+- Full support for **cross-platform execution** (Linux natively, Windows via WSL)
 
 ---
 
@@ -17,10 +17,10 @@
 ### 1. Prerequisites
 
 - [Qt Creator](https://www.qt.io/download) (6.0+)
-- WSL (Windows Subsystem for Linux)
-- Ubuntu distribution inside WSL
-- `g++` and `gcc` compilers installed inside WSL
-- Valgrind installed in WSL
+- WSL (Windows Subsystem for Linux) or **Linux** system
+- Ubuntu distribution inside **WSL**
+- `g++` and `gcc` compilers installed inside **WSL** or **Linux**
+- Valgrind installed in **WSL** or **Linux** system
 
 ---
 ### 2. Installing Qt Creator
@@ -62,7 +62,7 @@ Then set Ubuntu as default:
 wsl --set-default Ubuntu-22.04
 ```
 
-#### c. Install build-essential tools in Ubuntu
+#### c. Install build-essential tools in Ubuntu (*for both WSL and Linux*)
 
 Open powershell and launch wsl
 
@@ -80,15 +80,15 @@ sudo apt install build-essential
 The `build-essential` package includes `gcc`, `g++`, and other tools required for compiling C/C++ programs.
 
 
-#### d. Install Valgrind in Ubuntu
+#### d. Install Valgrind in Ubuntu (*for both WSL and Linux*)
 
-Open powershell and launch wsl
+Open powershell and launch wsl (*Windows*)
 
 ```powershell
 wsl
 ```
 
-Then inside wsl run 
+Then inside wsl run
 
 ```powershell
 sudo apt update
@@ -180,11 +180,9 @@ The script will automatically compile and run each test, saving the profiling re
 
 ## 📌 Notes
 
-- Valgrind runs only on Linux-based systems (including WSL).
+- 🐧 **Valgrind** runs only on Linux systems. On Windows, it uses WSL to execute Linux binaries.
 
-- Visualization panel and full report view are currently in development.
-
-- The project is modular and open to contributions.
+- 🧩 The project is modular and open for contributions.
 
 ---
 
