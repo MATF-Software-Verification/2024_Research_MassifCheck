@@ -32,6 +32,9 @@ MassifAnalyzerThresholdsWindow::MassifAnalyzerThresholdsWindow(QWidget *parent)
     ui->lbFragmentationThresholdHelp->setPixmap(pixmap);
     ui->lbFragmentationThresholdHelp->setToolTip("The ratio of extra heap memory (unused but reserved) to actual used heap memory,"
                                                  " above which fragmentation is suspected. Expressed as a percentage.");
+
+    ui->lbStabilizationSensitivityHelp->setPixmap(pixmap);
+    ui->lbStabilizationSensitivityHelp->setToolTip("Number of consecutive snapshots to check after a detected memory jump to confirm if heap memory usage has stabilized.");
 }
 
 void MassifAnalyzerThresholdsWindow::setThresholdsFields(MassifAnalyzerThresholds *thresholds)
