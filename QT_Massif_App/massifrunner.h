@@ -41,6 +41,8 @@ public:
     inline MassifAnalyzerThresholds* getThresholds(){return massifAnalyzerThresholds;};
     inline MassifOptions* getOptions(){return massifOptions;}
 
+    bool isWindowsHost() const;
+
 private:
     Mode mode = COMPILE;
 
