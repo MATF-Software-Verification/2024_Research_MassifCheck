@@ -13,6 +13,7 @@ MassifAnalyzerThresholds::MassifAnalyzerThresholds(QObject *parent, MassifAnalyz
     , memoryJumpThreshold(thresholds->memoryJumpThreshold)
     , largeMemoryThreshold(thresholds->largeMemoryThreshold)
     , fragmentationThreshold(thresholds->fragmentationThreshold)
+    , stabilizationWindowSize(thresholds->stabilizationWindowSize)
 {}
 
 void MassifAnalyzerThresholds::setThresholds(MassifAnalyzerThresholds *thresholds)
@@ -24,4 +25,5 @@ void MassifAnalyzerThresholds::setThresholds(MassifAnalyzerThresholds *threshold
     largeMemoryThreshold = thresholds->largeMemoryThreshold;
     memoryFreeThreshold = thresholds->memoryFreeThreshold;
     fragmentationThreshold = thresholds->fragmentationThreshold;
+    stabilizationWindowSize = thresholds->stabilizationWindowSize;
 }

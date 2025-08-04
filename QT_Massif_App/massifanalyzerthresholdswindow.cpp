@@ -43,6 +43,7 @@ void MassifAnalyzerThresholdsWindow::setThresholdsFields(MassifAnalyzerThreshold
     ui->sbMemoryFreeThreshold->setValue(thresholds->memoryFreeThreshold);
     ui->sbMemoryJumpThreshold->setValue(thresholds->memoryJumpThreshold * 100);
     ui->sbSmallTotalAllocation->setValue(thresholds->smallTotalAllocation / BYTES_TO_MB);
+    ui->sbStabilizationSensitivity->setValue(thresholds->stabilizationWindowSize);
 }
 
 MassifAnalyzerThresholdsWindow::~MassifAnalyzerThresholdsWindow()
@@ -60,6 +61,7 @@ void MassifAnalyzerThresholdsWindow::on_buttonBox_accepted()
     massifAnalyzerThresholds->memoryFreeThreshold = ui->sbMemoryFreeThreshold->text().toLongLong();
     massifAnalyzerThresholds->memoryJumpThreshold = ui->sbMemoryJumpThreshold->text().toDouble() / 100;
     massifAnalyzerThresholds->smallTotalAllocation = ui->sbSmallTotalAllocation->text().toLongLong() * BYTES_TO_MB;
+    massifAnalyzerThresholds->stabilizationWindowSize = ui->sbStabilizationSensitivity->text().toInt();
 
     emit thresholdsChanged(massifAnalyzerThresholds);
 }

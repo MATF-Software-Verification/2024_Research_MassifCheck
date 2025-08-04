@@ -3,7 +3,20 @@
 
 MassifAnalyzer::MassifAnalyzer(){}
 
-
+/**
+ * @brief Checks if memory usage has stabilized after a given snapshot.
+ *
+ * This function checks whether the heap memory has not increased
+ * in the specified number of consecutive snapshots following a memory jump.
+ *
+ * @param snapshots Vector of memory snapshots collected over time.
+ * @param currentIndex Index of the snapshot after which stability is to be checked.
+ * @param windowSize Number of consecutive snapshots to consider for stabilization.
+ *        Memory is considered stabilized only if none of these show increased heap usage.
+ *
+ * @return true if memory usage is stable in the given window after the current snapshot;
+ *         false otherwise.
+ */
 bool MassifAnalyzer::isMemoryStabilized(const QVector<Snapshot>& snapshots, int currentIndex, int windowSize) {
     if (currentIndex < 0 || currentIndex + windowSize >= snapshots.size())
         return false;
@@ -24,6 +37,7 @@ QString MassifAnalyzer::detectMemoryLeaks(const QVector<Snapshot>& snapshots, Ma
     const qint64 BYTES_TO_MB = 1024 * 1024;
     const qint64 MEMORY_FREE_THRESHOLD = thresholds->memoryFreeThreshold; //4 * 1024; // 4 KB
     const double FRAGMENTATION_THRESHOLD = thresholds->fragmentationThreshold; //0.10; // 10%
+    const int  WINDOWS_SIZE_TRESHOLD = thresholds->stabilizationWindowSize;
 
     Snapshot previousSnapshot;
     bool hasPreviousSnapshot = false;
@@ -51,7 +65,7 @@ QString MassifAnalyzer::detectMemoryLeaks(const QVector<Snapshot>& snapshots, Ma
                     .arg(snap.snapshot)
                     .arg(heapJump * 100, 0, 'f', 2);
 
-                if (isMemoryStabilized(snapshots, i)) {
+                if (isMemoryStabilized(snapshots, i, WINDOWS_SIZE_TRESHOLD)) {
                     result += QString("Note: Memory stabilized after snapshot %1\n")
                         .arg(snap.snapshot);
                 } else {
@@ -102,7 +116,7 @@ QString MassifAnalyzer::detectMemoryLeaks(const QVector<Snapshot>& snapshots, Ma
 
             if (fragmentationRatio > FRAGMENTATION_THRESHOLD) {
                 result += QString("Warning: Possible heap fragmentation in snapshot %1: extra memory is %2% of heap\n")
-                .arg(snap.snapshot)
+                    .arg(snap.snapshot)
                     .arg(fragmentationRatio * 100, 0, 'f', 2);
             }
         }
@@ -110,7 +124,7 @@ QString MassifAnalyzer::detectMemoryLeaks(const QVector<Snapshot>& snapshots, Ma
         if (i == snapshots.size() - 1){
             if (snap.mem_heap_B > MEMORY_FREE_THRESHOLD) {
                 result += QString("Warning: Memory not fully freed at the end! Heap usage: %1 bytes\n")
-                .arg(snap.mem_heap_B);
+                    .arg(snap.mem_heap_B);
             } else {
                 result += QString("Info: Memory fully freed at the end.\n");
             }
@@ -149,17 +163,17 @@ QString MassifAnalyzer::generateFunctionAllocationReport(const QMap<QString, Fun
         // Warn if a function allocates a lot of memory
         if (summary.totalBytes > HIGH_MEMORY_THRESHOLD) {
             result += QString("Warning: Function '%1' is responsible for a large memory allocation (over 100MB).\n")
-            .arg(summary.function);
+                .arg(summary.function);
         }
 
         if (summary.count > HIGH_ALLOCATION_COUNT) {
             if (summary.totalBytes < SMALL_TOTAL_ALLOCATION) {
                 result += QString("Note: Function '%1' performs many small allocations (%2); consider optimizing with preallocation or pooling.\n")
-                .arg(summary.function)
+                    .arg(summary.function)
                     .arg(summary.count);
             } else {
                 result += QString("Note: Function '%1' performs many allocations (%2); consider checking for inefficiencies.\n")
-                .arg(summary.function)
+                    .arg(summary.function)
                     .arg(summary.count);
             }
         }
