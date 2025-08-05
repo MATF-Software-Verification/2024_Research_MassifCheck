@@ -9,18 +9,21 @@
 - Select a compiled binary to analyze
 - Run Valgrind's Massif tool with custom options
 - Parse Massif output
-- Full support for **cross-platform execution** (Linux natively, Windows via WSL)
+- Provide memory usage analysis with function-level insights, including detection of heap growth and stabilization  
+- Generate suggestions based on customizable thresholds to help identify abnormal memory behavior
 
+
+📘 For detailed instructions, see the [Usage Guide](https://github.com/MATF-Software-Verification/2024_Research_MassifCheck/wiki/Usage-Guide).
 ---
 
 ## 🚀 Getting Started
 ### 1. Prerequisites
 
 - [Qt Creator](https://www.qt.io/download) (6.0+)
-- WSL (Windows Subsystem for Linux) or **Linux** system
+- WSL (Windows Subsystem for Linux)
 - Ubuntu distribution inside **WSL**
-- `g++` and `gcc` compilers installed inside **WSL** or **Linux**
-- Valgrind installed in **WSL** or **Linux** system
+- `g++` and `gcc` compilers installed inside **WSL**
+- Valgrind installed in **WSL**
 
 ---
 ### 2. Installing Qt Creator
@@ -62,7 +65,7 @@ Then set Ubuntu as default:
 wsl --set-default Ubuntu-22.04
 ```
 
-#### c. Install build-essential tools in Ubuntu (*for both WSL and Linux*)
+#### c. Install build-essential tools in Ubuntu
 
 Open powershell and launch wsl
 
@@ -80,9 +83,9 @@ sudo apt install build-essential
 The `build-essential` package includes `gcc`, `g++`, and other tools required for compiling C/C++ programs.
 
 
-#### d. Install Valgrind in Ubuntu (*for both WSL and Linux*)
+#### d. Install Valgrind in Ubuntu
 
-Open powershell and launch wsl (*Windows*)
+Open powershell and launch wsl
 
 ```powershell
 wsl
@@ -113,9 +116,17 @@ valgrind --version
 
 💡 Make sure your Valgrind-executed binaries are accessible from WSL paths if running through Windows UI.
 
+## 🧪 Testing with Example Inputs
+
+The `./test/` directory contains several example C and C++ source files that you can use to test the application.
+
+When you run these test files through the application, the generated `massif.out.x` files will be saved by default in the `./massif_files/` directory.
+
+Alternatively, you can use the provided `run_massif_on_tests.sh` script to automatically compile and generate `massif.out.x` files in the `./massif_files/` directory, which you can then load and analyze within the application.
+
 ---
 
-## 🧪  Automated Massif Profiling for C and C++ Tests with `run_massif_on_tests.sh` (Optional)
+## 🤖  Automated Massif Profiling for C and C++ Tests with `run_massif_on_tests.sh` (Optional)
 
 The `run_massif_on_tests.sh` helper script is optional and automates the process of compiling and running C and C++ tests with Valgrind's Massif tool to generate profiling data.
 This script can be used as a faster way to generate Massif output files, but all the same functionality is available through the Qt application itself.
@@ -153,7 +164,7 @@ This script can be used as a faster way to generate Massif output files, but all
 ### ⚙️ **How to use:**
 
 1. **(Optional)** Predefined Test Files:
-    - The script is currently hardcoded to run the following test files: `test1.c`, `test2.c`, `test3.cpp`.
+    - The script is currently hardcoded to run the following test files: `test1.c`, `test2.c`, `test3.cpp`, `test4.cpp`, `test5.cpp`.
     - To add your own test files, simply edit the `TEST_FILES` array in the script. For example:
 
     ```bash
@@ -181,8 +192,6 @@ The script will automatically compile and run each test, saving the profiling re
 ## 📌 Notes
 
 - 🐧 **Valgrind** runs only on Linux systems. On Windows, it uses WSL to execute Linux binaries.
-
-- 🧩 The project is modular and open for contributions.
 
 ---
 
