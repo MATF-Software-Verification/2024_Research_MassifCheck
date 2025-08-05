@@ -1,7 +1,6 @@
 #include "massifrunner.h"
 #include <string>
 #include <QDebug>
-#include <QOperatingSystemVersion>
 
 
 MassifRunner::MassifRunner(QObject *parent)
@@ -63,15 +62,10 @@ bool MassifRunner::runMassifCheck(FileSelector& fileSelector, Mode mode){
             addArg(QString::fromStdString("gcc"));
         }
         addArg(QString::fromStdString("-g"));
-        addArg(isWindowsHost() ? convertWindowsPathToWsl(fileSelector.getFilePath()) : fileSelector.getFilePath());
+        addArg(convertWindowsPathToWsl(fileSelector.getFilePath()));
         addArg(QString::fromStdString("-o"));
-        addArg(isWindowsHost() ? convertWindowsPathToWsl(fileSelector.getOutFilePath() + fileSelector.getOutFileName())
-                               : fileSelector.getOutFilePath() + fileSelector.getOutFileName());
-        if (isWindowsHost()) {
-            process->start("wsl", getArgs());
-        } else {
-            process->start(getArgs().first(), getArgs().mid(1)); // directly on Linux
-        }
+        addArg(convertWindowsPathToWsl(fileSelector.getOutFilePath() + fileSelector.getOutFileName()));
+        process->start("wsl", getArgs());
         process->waitForFinished();
         QMessageBox msgBox;
         msgBox.setText("Compile finished!");
@@ -82,45 +76,21 @@ bool MassifRunner::runMassifCheck(FileSelector& fileSelector, Mode mode){
         mode = BINARY;
     }
     if ( mode == BINARY){
-        QString massifOut = isWindowsHost() ? convertWindowsPathToWsl(getNextMassifOutFilePath()) : getNextMassifOutFilePath();
-        QString exePath = isWindowsHost() ? convertWindowsPathToWsl(fileSelector.getFilePath()) : fileSelector.getFilePath();
+        QString massifOut = convertWindowsPathToWsl(getNextMassifOutFilePath());
+        QString exePath = convertWindowsPathToWsl(fileSelector.getFilePath());
 
-        if (isWindowsHost()) {
-            QString command = QString("valgrind --tool=massif %1 --massif-out-file=%2 %3; echo '--- Done ---'; read")
-            .arg(massifOptions->makeAdditionalArguments(), massifOut, exePath);
+        QString command = QString("valgrind --tool=massif " + massifOptions->makeAdditionalArguments() + " --massif-out-file=%1 %2; echo '--- Done ---'; read")
+                              .arg(massifOut, exePath);
 
-            args.clear();
-            args << "/c" << "start" << "wsl.exe" << "-e" << "bash" << "-c" << command;
+        // Using cmd.exe to open a new terminal on widows in case the .out is an interactive program
+        args.clear();
+        args << "/c" << "start" << "wsl.exe" << "-e" << "bash" << "-c" << command;
 
-            if (!QProcess::startDetached("cmd.exe", args)) {
-                QMessageBox::warning(nullptr, "Error", "Failed to launch Valgrind in terminal.");
-                return false;
-            }
-        } else {
-            QStringList valgrindArgs = {"--tool=massif"};
-            valgrindArgs += massifOptions->makeAdditionalArguments().split(' ', Qt::SkipEmptyParts);
-            valgrindArgs << "--massif-out-file=" + massifOut << exePath;
-
-            // Pokreni u novom terminalu
-            if (!QProcess::startDetached("x-terminal-emulator", QStringList{"-e", "valgrind"} + valgrindArgs)) {
-                QMessageBox::warning(nullptr, "Error", "Failed to launch Valgrind in terminal.");
-                return false;
-            }
+        bool started = QProcess::startDetached("cmd.exe", args);
+        if (!started) {
+            QMessageBox::warning(nullptr, "Error", "Failed to launch Valgrind in terminal.");
+            return false;
         }
-
-        // // Komanda koja pokreće valgrind u WSL i čeka ENTER da zatvori terminal
-        // QString command = QString("valgrind --tool=massif " + massifOptions->makeAdditionalArguments() + " --massif-out-file=%1 %2; echo '--- Done ---'; read")
-        //                       .arg(massifOut, exePath);
-
-        // // Using cmd.exe to open a new terminal on widows in case the .out is an interactive program
-        // args.clear();
-        // args << "/c" << "start" << "wsl.exe" << "-e" << "bash" << "-c" << command;
-
-        // bool started = QProcess::startDetached("cmd.exe", args);
-        // if (!started) {
-        //     QMessageBox::warning(nullptr, "Error", "Failed to launch Valgrind in terminal.");
-        //     return false;
-        // }
     }
 
     return true;
@@ -146,20 +116,13 @@ QString MassifRunner::runMassifOutputAnalysis(FileSelector& fileSelector) {
 }
 
 QString MassifRunner::MassifGraphUsingMsPrint(const FileSelector& massifSelector) {
-    QString massifFilePath = isWindowsHost()
-                                 ? convertWindowsPathToWsl(massifSelector.getFilePath())
-                                 : massifSelector.getFilePath();
+    QString massifFilePath = convertWindowsPathToWsl(massifSelector.getFilePath());
 
     QStringList args;
     args << "ms_print" << massifFilePath;
 
     QProcess process;
-
-    if (isWindowsHost()) {
-        process.start("wsl", args);
-    } else {
-        process.start(args.first(), args.mid(1));
-    }
+    process.start("wsl", args);
 
     bool finished = process.waitForFinished(10000);
     if (!finished) {
@@ -176,25 +139,6 @@ QString MassifRunner::MassifGraphUsingMsPrint(const FileSelector& massifSelector
     }
 
     return QString::fromUtf8(output);
-
-    // QProcess process;
-    // process.start("wsl", args);
-
-    // bool finished = process.waitForFinished(10000);
-    // if (!finished) {
-    //     qWarning() << "ms_print process timed out";
-    //     return "Error: ms_print process timed out.";
-    // }
-
-    // QByteArray output = process.readAllStandardOutput();
-    // QByteArray errorOutput = process.readAllStandardError();
-
-    // if (!errorOutput.isEmpty()) {
-    //     qWarning() << "ms_print error:" << errorOutput;
-    //     return "Error running ms_print:\n" + QString(errorOutput);
-    // }
-
-    // return QString::fromUtf8(output);
 }
 
 
@@ -236,8 +180,4 @@ void MassifRunner::setMassifOptions(MassifOptions *options)
 void MassifRunner::setMassifAnalyzerThresholds(MassifAnalyzerThresholds *thresholds){
     this->massifAnalyzerThresholds->setThresholds(thresholds);
     delete(thresholds);
-}
-
-bool MassifRunner::isWindowsHost() const {
-    return QOperatingSystemVersion::currentType() == QOperatingSystemVersion::Windows;
 }
