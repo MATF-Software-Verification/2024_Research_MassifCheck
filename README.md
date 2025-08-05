@@ -14,6 +14,7 @@
 
 
 📘 For detailed instructions, see the [Usage Guide](https://github.com/MATF-Software-Verification/2024_Research_MassifCheck/wiki/Usage-Guide).
+
 ---
 
 ## 🚀 Getting Started
