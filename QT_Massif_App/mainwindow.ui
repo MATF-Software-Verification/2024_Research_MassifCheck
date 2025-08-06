@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>2024_Research_Massif_Check</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QPushButton" name="btLoadFile">

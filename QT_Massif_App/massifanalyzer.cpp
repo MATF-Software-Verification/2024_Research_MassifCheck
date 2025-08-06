@@ -129,17 +129,6 @@ QString MassifAnalyzer::detectMemoryLeaks(const QVector<Snapshot>& snapshots, Ma
                 result += QString("ℹ️ [Info] Memory fully freed at the end.\n");
             }
         }
-
-        // if (!snap.allocations.isEmpty()) {
-        //     result += QString("Top allocations in snapshot %1\n").arg(snap.snapshot);
-        //     for (const AllocationEntry& alloc : snap.allocations) {
-        //         result += QString("%1 bytes in %2 at %3 : %4\n")
-        //                       .arg(alloc.bytes)
-        //                       .arg(alloc.function)
-        //                       .arg(alloc.sourceFile)
-        //                       .arg(alloc.line);
-        //     }
-        // }
     }
 
     return result;

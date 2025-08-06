@@ -10,6 +10,8 @@ ResultDialog::ResultDialog(QWidget *parent)
     QFont font("Monospace");
     font.setStyleHint(QFont::Monospace);
 
+    setWindowIcon(QApplication::style()->standardIcon(QStyle::SP_FileDialogDetailedView));
+
     ui->plainTextEdit->setFont(font);
     ui->plainTextEdit_2->setFont(font);
 }

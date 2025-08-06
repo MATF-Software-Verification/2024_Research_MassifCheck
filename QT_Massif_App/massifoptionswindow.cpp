@@ -7,6 +7,7 @@ MassifOptionsWindow::MassifOptionsWindow(QWidget *parent)
     , ui(new Ui::MassifOptionsWindow)
 {
     ui->setupUi(this);
+    setWindowIcon(QIcon(":/icons/setting_icon.png"));
     QPixmap pixmap = QApplication::style()->standardIcon(QStyle::SP_MessageBoxInformation).pixmap(16, 16);
     ui->lbHeapProfilingHelp->setPixmap(pixmap);
     ui->lbStackProfilingHelp->setPixmap(pixmap);
@@ -59,8 +60,6 @@ void MassifOptionsWindow::on_buttonBox_accepted()
         options->timeUnit = INSTRUCTIONS;
     }
     options->maxSnapshots = ui->sbMaxSnapshots->value();
-
-    // TODO set functions to ignore based on what is written in tbIgnore functions
 
      emit optionsChanged(options);
 }
