@@ -45,9 +45,6 @@ std::pair<QMap<QString, QString>, QVector<Snapshot>> Parser::parseMassifFile(con
                 entry.sourceFile = match.captured(3);
                 entry.line = match.captured(4).toInt();
 
-                //std::cout << entry.bytes << " bytes, " << entry.function.toStdString()
-                //          << " " << entry.sourceFile.toStdString() << ":" << entry.line << std::endl;
-
                 bool isFromStdLib = stdlibFunctionRegex.match(entry.function).hasMatch();
                 bool hasValidSourceFile = !entry.sourceFile.isEmpty()
                                           && (entry.sourceFile.endsWith(".cpp") || entry.sourceFile.endsWith(".cc")
@@ -67,12 +64,7 @@ std::pair<QMap<QString, QString>, QVector<Snapshot>> Parser::parseMassifFile(con
                 entry.sourceFile = "";
                 entry.line = 0;
 
-                //std::cout << entry.bytes << " bytes, summary allocation line" << std::endl;
-
                 snapshot.allocations.append(entry);
-            }
-            else {
-                qDebug() << "Failed to match allocation line:" << line;
             }
         }
         else if (line.contains(headerRegex, &match)) {
@@ -106,8 +98,6 @@ std::pair<QMap<QString, QString>, QVector<Snapshot>> Parser::parseMassifFile(con
 }
 
 
-// this function groups allocations with functions summing the amount of memory allocated in those functions
-// the problem is right now we have every function mentioned, and in more complex programs that will include STL etc..
 QMap<QString, FunctionAllocSummary> Parser::summarizeAllocationsByFunction(const QVector<Snapshot>& snapshots) {
     QMap<QString, FunctionAllocSummary> functionTotals;
 
