@@ -14,6 +14,8 @@ ResultDialog::ResultDialog(QWidget *parent)
 
     ui->plainTextEdit->setFont(font);
     ui->plainTextEdit_2->setFont(font);
+
+    this->setFixedSize(this->size());
 }
 
 ResultDialog::~ResultDialog()

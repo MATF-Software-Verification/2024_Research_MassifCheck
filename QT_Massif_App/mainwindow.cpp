@@ -20,6 +20,9 @@ MainWindow::MainWindow(QWidget *parent)
     QIcon icon = QApplication::style()->standardIcon(QStyle::SP_DriveNetIcon);
     trayIcon->setIcon(icon);
     trayIcon->show();
+
+    this->setWindowFlags(windowFlags() & ~Qt::WindowMaximizeButtonHint);
+    this->setFixedSize(this->size());
 }
 
 MainWindow::~MainWindow()

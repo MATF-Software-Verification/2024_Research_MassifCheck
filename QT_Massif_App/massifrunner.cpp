@@ -148,7 +148,7 @@ QString MassifRunner::getNextMassifOutFilePath() {
     QDir dir(massifDir);
     QStringList files = dir.entryList(QStringList() << "massif.out.*", QDir::Files);
 
-    int maxIndex = -1;
+    int maxIndex = 0;
     QRegularExpression regex(R"(massif\.out\.(\d+))");
 
     for (const QString& file : files) {

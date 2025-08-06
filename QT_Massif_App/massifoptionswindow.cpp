@@ -23,6 +23,8 @@ MassifOptionsWindow::MassifOptionsWindow(QWidget *parent)
                                "and for testing purposes, because it is the most reproducible across different machines.");
     ui->lbMaxSnapshotsHelp->setToolTip("The maximum number of snapshots recorded. If set to N, "
                                    "for all programs except very short-running ones, the final number of snapshots will be between N/2 and N.");
+
+    this->setFixedSize(this->size());
 }
 
 MassifOptionsWindow::~MassifOptionsWindow()

@@ -35,6 +35,8 @@ MassifAnalyzerThresholdsWindow::MassifAnalyzerThresholdsWindow(QWidget *parent)
 
     ui->lbStabilizationSensitivityHelp->setPixmap(pixmap);
     ui->lbStabilizationSensitivityHelp->setToolTip("Number of consecutive snapshots to check after a detected memory jump to confirm if heap memory usage has stabilized.");
+
+    this->setFixedSize(this->size());
 }
 
 void MassifAnalyzerThresholdsWindow::setThresholdsFields(MassifAnalyzerThresholds *thresholds)
