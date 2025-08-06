@@ -174,17 +174,46 @@ This script can be used as a faster way to generate Massif output files, but all
     - The script will automatically detect the correct compiler based on the file extension (`gcc` for `.c` and `g++` for `.cpp`).
     > **Note:** This step is optional. If you don't need to modify the test files, you can skip it and use the default ones.
 
-    
-2. Make sure `run_massif_on_tests.sh` is executable:
+2. Open **WSL** Terminal
+
+    - Open PowerShell in the directory where this project is located, then start WSL by running:
+
+     ```bash
+    wsl
+    ```
+
+    > **Note**: This will open a Linux terminal in the current project folder, so you can run the bash script properly.
+
+3. Make sure `run_massif_on_tests.sh` is executable:
 
     ```bash
     chmod +x run_massif_on_tests.sh
     ```
-3. Run the script:
+4. Run the script:
 
     ```bash
     ./run_massif_on_tests.sh
     ```
+
+    - If you get a '`cannot execute`' error running the script in **WSL**, it’s likely due to Windows-style CRLF line endings
+    To fix this, in **WSL** install `dos2unix` if you don’t have it:
+
+      ```bash
+      sudo apt update
+      sudo apt install dos2unix
+      ```
+
+      Then convert the script to Unix line endings
+
+      ```bash
+      dos2unix run_massif_on_tests.sh
+      ```
+
+      Then you can run the script again
+
+      ```bash
+      ./run_massif_on_tests.sh
+      ```
 
 The script will automatically compile and run each test, saving the profiling results in the `massif_files/` directory.
 
