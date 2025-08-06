@@ -3,6 +3,7 @@
 #include "./ui_mainwindow.h"
 #include <QDir>
 #include <QStyle>
+#include <QSystemTrayIcon>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -13,6 +14,15 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     ui->btMassifOptions->setToolTip("Configure Massif settings");
+    ui->btMassifAnalyzerParameters->setToolTip("Configure thresholds for report analysis");
+    setWindowIcon(QApplication::style()->standardIcon(QStyle::SP_DriveNetIcon));
+    QSystemTrayIcon *trayIcon = new QSystemTrayIcon(this);
+    QIcon icon = QApplication::style()->standardIcon(QStyle::SP_DriveNetIcon);
+    trayIcon->setIcon(icon);
+    trayIcon->show();
+
+    this->setWindowFlags(windowFlags() & ~Qt::WindowMaximizeButtonHint);
+    this->setFixedSize(this->size());
 }
 
 MainWindow::~MainWindow()
@@ -23,15 +33,6 @@ MainWindow::~MainWindow()
 void MainWindow::on_btLoadFile_clicked()
 {
     fileSelector->selectFile(this, mode);
-
-    // Just for debugging
-    //QMessageBox msgBox;
-    // msgBox.setText(massifRunner->getFileName() +
-    //                "\n with path \n" + massifRunner->getFilePath() +
-    //                "\n " + massifRunner->getProgram() +
-    //                "\n " + massifRunner->convertWindowsPathToWsl(massifRunner->getFilePath()) +
-    //                "\n " + massifRunner->convertWindowsPathToWsl(massifRunner->getMassifFilesDir()));
-    // msgBox.exec();
 
     this->ui->leFileName->setText(fileSelector->getFileName());
 }
@@ -71,6 +72,7 @@ void MainWindow::on_btExecute_clicked()
 void MainWindow::on_btMassifOptions_clicked()
 {
     MassifOptionsWindow massifOptionsWindow;
+    massifOptionsWindow.setOptionsFields(massifRunner->getOptions());
 
     QObject::connect(&massifOptionsWindow, &MassifOptionsWindow::optionsChanged, this, &MainWindow::setMassifOptions);
 

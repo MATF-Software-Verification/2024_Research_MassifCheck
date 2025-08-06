@@ -7,6 +7,7 @@ MassifOptionsWindow::MassifOptionsWindow(QWidget *parent)
     , ui(new Ui::MassifOptionsWindow)
 {
     ui->setupUi(this);
+    setWindowIcon(QIcon(":/icons/setting_icon.png"));
     QPixmap pixmap = QApplication::style()->standardIcon(QStyle::SP_MessageBoxInformation).pixmap(16, 16);
     ui->lbHeapProfilingHelp->setPixmap(pixmap);
     ui->lbStackProfilingHelp->setPixmap(pixmap);
@@ -22,11 +23,30 @@ MassifOptionsWindow::MassifOptionsWindow(QWidget *parent)
                                "and for testing purposes, because it is the most reproducible across different machines.");
     ui->lbMaxSnapshotsHelp->setToolTip("The maximum number of snapshots recorded. If set to N, "
                                    "for all programs except very short-running ones, the final number of snapshots will be between N/2 and N.");
+
+    this->setFixedSize(this->size());
 }
 
 MassifOptionsWindow::~MassifOptionsWindow()
 {
     delete ui;
+}
+
+void MassifOptionsWindow::setOptionsFields(MassifOptions *options)
+{
+    options->includeHeapProfiling ? ui->rbHeapYes->setChecked(true) : ui->rbHeapNo->setChecked(true);
+    options->includeStackProfiling ? ui->rbStackYes->setChecked(true) : ui->rbStackNo->setChecked(true);
+    if (options->timeUnit == MILISECONDS){
+        ui->rbTimeUnitMs->setChecked(true);
+    }
+    else if (options->timeUnit == BYTES){
+        ui->rbTimeUnitB->setChecked(true);
+    }
+    else {
+        ui->rbTimeUnitI->setChecked(true);
+    }
+
+    ui->sbMaxSnapshots->setValue(options->maxSnapshots);
 }
 
 void MassifOptionsWindow::on_buttonBox_accepted()
@@ -42,8 +62,6 @@ void MassifOptionsWindow::on_buttonBox_accepted()
         options->timeUnit = INSTRUCTIONS;
     }
     options->maxSnapshots = ui->sbMaxSnapshots->value();
-
-    // TODO set functions to ignore based on what is written in tbIgnore functions
 
      emit optionsChanged(options);
 }

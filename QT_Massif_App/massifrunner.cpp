@@ -79,7 +79,6 @@ bool MassifRunner::runMassifCheck(FileSelector& fileSelector, Mode mode){
         QString massifOut = convertWindowsPathToWsl(getNextMassifOutFilePath());
         QString exePath = convertWindowsPathToWsl(fileSelector.getFilePath());
 
-        // Komanda koja pokreće valgrind u WSL i čeka ENTER da zatvori terminal
         QString command = QString("valgrind --tool=massif " + massifOptions->makeAdditionalArguments() + " --massif-out-file=%1 %2; echo '--- Done ---'; read")
                               .arg(massifOut, exePath);
 
@@ -149,7 +148,7 @@ QString MassifRunner::getNextMassifOutFilePath() {
     QDir dir(massifDir);
     QStringList files = dir.entryList(QStringList() << "massif.out.*", QDir::Files);
 
-    int maxIndex = -1;
+    int maxIndex = 0;
     QRegularExpression regex(R"(massif\.out\.(\d+))");
 
     for (const QString& file : files) {
@@ -174,6 +173,8 @@ void MassifRunner::setMassifOptions(MassifOptions *options)
     massifOptions->includeStackProfiling = options->includeStackProfiling;
     massifOptions->timeUnit = options->timeUnit;
     massifOptions->maxSnapshots = options->maxSnapshots;
+
+    delete options;
 }
 
 void MassifRunner::setMassifAnalyzerThresholds(MassifAnalyzerThresholds *thresholds){

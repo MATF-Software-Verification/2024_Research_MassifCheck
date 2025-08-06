@@ -9,11 +9,11 @@
 #include <QMessageBox>
 #include <QRegularExpression>
 #include "ModeEnum.h"
-#include "Parser.h"
 #include "fileselector.h"
-#include "massifanalyzer.h"
 #include "massifoptions.h"
 #include "massifanalyzerthresholds.h"
+#include "Parser.h"
+#include "massifanalyzer.h"
 
 
 class MassifRunner : public QObject
@@ -38,7 +38,8 @@ public:
     QString runMassifOutputAnalysis(FileSelector& fileSelector);
     QString MassifGraphUsingMsPrint(const FileSelector& massifSelector);
 
-    inline MassifAnalyzerThresholds* getThresholds(){return massifAnalyzerThresholds;}
+    inline MassifAnalyzerThresholds* getThresholds(){return massifAnalyzerThresholds;};
+    inline MassifOptions* getOptions(){return massifOptions;}
 
 private:
     Mode mode = COMPILE;

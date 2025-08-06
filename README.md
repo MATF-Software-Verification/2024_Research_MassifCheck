@@ -9,7 +9,11 @@
 - Select a compiled binary to analyze
 - Run Valgrind's Massif tool with custom options
 - Parse Massif output
-- (In Progress) Visualize heap memory usage
+- Provide memory usage analysis with function-level insights, including detection of heap growth and stabilization  
+- Generate suggestions based on customizable thresholds to help identify abnormal memory behavior
+
+
+📘 For detailed instructions, see the [Usage Guide](https://github.com/MATF-Software-Verification/2024_Research_MassifCheck/wiki/Usage-Guide).
 
 ---
 
@@ -18,9 +22,9 @@
 
 - [Qt Creator](https://www.qt.io/download) (6.0+)
 - WSL (Windows Subsystem for Linux)
-- Ubuntu distribution inside WSL
-- `g++` and `gcc` compilers installed inside WSL
-- Valgrind installed in WSL
+- Ubuntu distribution inside **WSL**
+- `g++` and `gcc` compilers installed inside **WSL**
+- Valgrind installed in **WSL**
 
 ---
 ### 2. Installing Qt Creator
@@ -88,7 +92,7 @@ Open powershell and launch wsl
 wsl
 ```
 
-Then inside wsl run 
+Then inside wsl run
 
 ```powershell
 sudo apt update
@@ -113,9 +117,17 @@ valgrind --version
 
 💡 Make sure your Valgrind-executed binaries are accessible from WSL paths if running through Windows UI.
 
+## 🧪 Testing with Example Inputs
+
+The `./test/` directory contains several example C and C++ source files that you can use to test the application.
+
+When you run these test files through the application, the generated `massif.out.x` files will be saved by default in the `./massif_files/` directory.
+
+Alternatively, you can use the provided `run_massif_on_tests.sh` script to automatically compile and generate `massif.out.x` files in the `./massif_files/` directory, which you can then load and analyze within the application.
+
 ---
 
-## 🧪  Automated Massif Profiling for C and C++ Tests with `run_massif_on_tests.sh` (Optional)
+## 🤖  Automated Massif Profiling for C and C++ Tests with `run_massif_on_tests.sh` (Optional)
 
 The `run_massif_on_tests.sh` helper script is optional and automates the process of compiling and running C and C++ tests with Valgrind's Massif tool to generate profiling data.
 This script can be used as a faster way to generate Massif output files, but all the same functionality is available through the Qt application itself.
@@ -153,7 +165,7 @@ This script can be used as a faster way to generate Massif output files, but all
 ### ⚙️ **How to use:**
 
 1. **(Optional)** Predefined Test Files:
-    - The script is currently hardcoded to run the following test files: `test1.c`, `test2.c`, `test3.cpp`.
+    - The script is currently hardcoded to run the following test files: `test1.c`, `test2.c`, `test3.cpp`, `test4.cpp`, `test5.cpp`.
     - To add your own test files, simply edit the `TEST_FILES` array in the script. For example:
 
     ```bash
@@ -162,17 +174,46 @@ This script can be used as a faster way to generate Massif output files, but all
     - The script will automatically detect the correct compiler based on the file extension (`gcc` for `.c` and `g++` for `.cpp`).
     > **Note:** This step is optional. If you don't need to modify the test files, you can skip it and use the default ones.
 
-    
-2. Make sure `run_massif_on_tests.sh` is executable:
+2. Open **WSL** Terminal
+
+    - Open PowerShell in the directory where this project is located, then start WSL by running:
+
+     ```bash
+    wsl
+    ```
+
+    > **Note**: This will open a Linux terminal in the current project folder, so you can run the bash script properly.
+
+3. Make sure `run_massif_on_tests.sh` is executable:
 
     ```bash
     chmod +x run_massif_on_tests.sh
     ```
-3. Run the script:
+4. Run the script:
 
     ```bash
     ./run_massif_on_tests.sh
     ```
+
+    - If you get a '`cannot execute`' error running the script in **WSL**, it’s likely due to Windows-style CRLF line endings
+    To fix this, in **WSL** install `dos2unix` if you don’t have it:
+
+      ```bash
+      sudo apt update
+      sudo apt install dos2unix
+      ```
+
+      Then convert the script to Unix line endings
+
+      ```bash
+      dos2unix run_massif_on_tests.sh
+      ```
+
+      Then you can run the script again
+
+      ```bash
+      ./run_massif_on_tests.sh
+      ```
 
 The script will automatically compile and run each test, saving the profiling results in the `massif_files/` directory.
 
@@ -180,11 +221,7 @@ The script will automatically compile and run each test, saving the profiling re
 
 ## 📌 Notes
 
-- Valgrind runs only on Linux-based systems (including WSL).
-
-- Visualization panel and full report view are currently in development.
-
-- The project is modular and open to contributions.
+- 🐧 **Valgrind** runs only on Linux systems. On Windows, it uses WSL to execute Linux binaries.
 
 ---
 

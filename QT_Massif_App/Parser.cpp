@@ -32,7 +32,7 @@ std::pair<QMap<QString, QString>, QVector<Snapshot>> Parser::parseMassifFile(con
 
         if (line.trimmed().startsWith("n")) {
             QRegularExpression detailedAllocRegex(R"(n\d+:\s+(\d+)\s+0x[0-9A-Fa-f]+:\s+(.+)\s+\((.+):(\d+)\))");
-            // (npr. "n1: 4000 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.")
+            // (example "n1: 4000 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.")
             QRegularExpression summaryAllocRegex(R"(n\d+:\s+(\d+)\s+\(.+\))");
             static QRegularExpression stdlibFunctionRegex(R"(^(std::|__gnu_cxx::|boost::|__|_Z|_IO_|_dl_|call_init|construct<|operator new|operator delete))");
 
@@ -44,9 +44,6 @@ std::pair<QMap<QString, QString>, QVector<Snapshot>> Parser::parseMassifFile(con
                 entry.function = match.captured(2);
                 entry.sourceFile = match.captured(3);
                 entry.line = match.captured(4).toInt();
-
-                //std::cout << entry.bytes << " bytes, " << entry.function.toStdString()
-                //          << " " << entry.sourceFile.toStdString() << ":" << entry.line << std::endl;
 
                 bool isFromStdLib = stdlibFunctionRegex.match(entry.function).hasMatch();
                 bool hasValidSourceFile = !entry.sourceFile.isEmpty()
@@ -67,12 +64,7 @@ std::pair<QMap<QString, QString>, QVector<Snapshot>> Parser::parseMassifFile(con
                 entry.sourceFile = "";
                 entry.line = 0;
 
-                //std::cout << entry.bytes << " bytes, summary allocation line" << std::endl;
-
                 snapshot.allocations.append(entry);
-            }
-            else {
-                qDebug() << "Failed to match allocation line:" << line;
             }
         }
         else if (line.contains(headerRegex, &match)) {
@@ -106,8 +98,6 @@ std::pair<QMap<QString, QString>, QVector<Snapshot>> Parser::parseMassifFile(con
 }
 
 
-// this function groups allocations with functions summing the amount of memory allocated in those functions
-// the problem is right now we have every function mentioned, and in more complex programs that will include STL etc..
 QMap<QString, FunctionAllocSummary> Parser::summarizeAllocationsByFunction(const QVector<Snapshot>& snapshots) {
     QMap<QString, FunctionAllocSummary> functionTotals;
 

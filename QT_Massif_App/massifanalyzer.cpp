@@ -60,16 +60,16 @@ QString MassifAnalyzer::detectMemoryLeaks(const QVector<Snapshot>& snapshots, Ma
             }
 
             if (heapJump >= MEMORY_JUMP_THRESHOLD) {
-                result += QString("Info: Heap memory jump between snapshot %1 and snapshot %2 is %3%\n")
+                result += QString("ℹ️ [Info] Heap memory jump between snapshot %1 and snapshot %2 is %3%\n")
                     .arg(previousSnapshot.snapshot)
                     .arg(snap.snapshot)
                     .arg(heapJump * 100, 0, 'f', 2);
 
                 if (isMemoryStabilized(snapshots, i, WINDOWS_SIZE_TRESHOLD)) {
-                    result += QString("Note: Memory stabilized after snapshot %1\n")
+                    result += QString("📝 [Note] Memory stabilized after snapshot %1\n")
                         .arg(snap.snapshot);
                 } else {
-                    result += QString("Warning: Memory continues to grow after snapshot %1\n")
+                    result += QString("⚠️ [Warning] Memory continues to grow after snapshot %1\n")
                         .arg(snap.snapshot);
                 }
             }
@@ -86,7 +86,7 @@ QString MassifAnalyzer::detectMemoryLeaks(const QVector<Snapshot>& snapshots, Ma
             }
 
             if (stackJump > MEMORY_JUMP_THRESHOLD) {
-                result += QString("Info: Stack memory jump between snapshot %1 and snapshot %2 is %3%\n")
+                result += QString("ℹ️ [Info] Stack memory jump between snapshot %1 and snapshot %2 is %3%\n")
                     .arg(previousSnapshot.snapshot)
                     .arg(snap.snapshot)
                     .arg(stackJump * 100, 0, 'f', 2);
@@ -94,13 +94,13 @@ QString MassifAnalyzer::detectMemoryLeaks(const QVector<Snapshot>& snapshots, Ma
         }
 
         if (snap.mem_heap_B > LARGE_MEMORY_THRESHOLD) {
-            result += QString("Warning: Large heap memory detected in snapshot %1: %2 MB\n")
+            result += QString("⚠️ [Warning] Large heap memory detected in snapshot %1: %2 MB\n")
                 .arg(snap.snapshot)
                 .arg(snap.mem_heap_B / BYTES_TO_MB);
         }
 
         if (snap.mem_stacks_B > LARGE_MEMORY_THRESHOLD) {
-            result += QString("Warning: Large stack memory detected in snapshot %1: %2 MB\n")
+            result += QString("⚠️ [Warning] Large stack memory detected in snapshot %1: %2 MB\n")
                 .arg(snap.snapshot)
                 .arg(snap.mem_stacks_B / BYTES_TO_MB);
         }
@@ -111,11 +111,11 @@ QString MassifAnalyzer::detectMemoryLeaks(const QVector<Snapshot>& snapshots, Ma
             hasPreviousSnapshot = true;
         }
 
-        if (snap.mem_heap_B > 0) { // da ne deliš sa nulom
+        if (snap.mem_heap_B > 0) { // not to divide with 0
             double fragmentationRatio = static_cast<double>(snap.mem_heap_extra_B) / snap.mem_heap_B;
 
             if (fragmentationRatio > FRAGMENTATION_THRESHOLD) {
-                result += QString("Warning: Possible heap fragmentation in snapshot %1: extra memory is %2% of heap\n")
+                result += QString("⚠️ [Warning] Possible heap fragmentation in snapshot %1: extra memory is %2% of heap\n")
                     .arg(snap.snapshot)
                     .arg(fragmentationRatio * 100, 0, 'f', 2);
             }
@@ -123,23 +123,12 @@ QString MassifAnalyzer::detectMemoryLeaks(const QVector<Snapshot>& snapshots, Ma
 
         if (i == snapshots.size() - 1){
             if (snap.mem_heap_B > MEMORY_FREE_THRESHOLD) {
-                result += QString("Warning: Memory not fully freed at the end! Heap usage: %1 bytes\n")
+                result += QString("⚠️ [Warning] Memory not fully freed at the end! Heap usage: %1 bytes\n")
                     .arg(snap.mem_heap_B);
             } else {
-                result += QString("Info: Memory fully freed at the end.\n");
+                result += QString("ℹ️ [Info] Memory fully freed at the end.\n");
             }
         }
-
-        // if (!snap.allocations.isEmpty()) {
-        //     result += QString("Top allocations in snapshot %1\n").arg(snap.snapshot);
-        //     for (const AllocationEntry& alloc : snap.allocations) {
-        //         result += QString("%1 bytes in %2 at %3 : %4\n")
-        //                       .arg(alloc.bytes)
-        //                       .arg(alloc.function)
-        //                       .arg(alloc.sourceFile)
-        //                       .arg(alloc.line);
-        //     }
-        // }
     }
 
     return result;
@@ -155,24 +144,24 @@ QString MassifAnalyzer::generateFunctionAllocationReport(const QMap<QString, Fun
     for (auto it = functionSummary.constBegin(); it != functionSummary.constEnd(); ++it) {
         const FunctionAllocSummary& summary = it.value();
 
-        result += QString("Function '%1' allocated total %2 bytes in %3 allocations.\n")
+        result += QString("📌 [Function] \n  ℹ️ [Info] Function '%1' allocated total %2 bytes in %3 allocations.\n")
                       .arg(summary.function)
                       .arg(summary.totalBytes)
                       .arg(summary.count);
 
         // Warn if a function allocates a lot of memory
         if (summary.totalBytes > HIGH_MEMORY_THRESHOLD) {
-            result += QString("Warning: Function '%1' is responsible for a large memory allocation (over 100MB).\n")
+            result += QString("  ⚠️ [Warning] Function '%1' is responsible for a large memory allocation (over 100MB).\n")
                 .arg(summary.function);
         }
 
         if (summary.count > HIGH_ALLOCATION_COUNT) {
             if (summary.totalBytes < SMALL_TOTAL_ALLOCATION) {
-                result += QString("Note: Function '%1' performs many small allocations (%2); consider optimizing with preallocation or pooling.\n")
+                result += QString("  📝 [Note] Function '%1' performs many small allocations (%2); consider optimizing with preallocation or pooling.\n")
                     .arg(summary.function)
                     .arg(summary.count);
             } else {
-                result += QString("Note: Function '%1' performs many allocations (%2); consider checking for inefficiencies.\n")
+                result += QString("  📝 [Note] Function '%1' performs many allocations (%2); consider checking for inefficiencies.\n")
                     .arg(summary.function)
                     .arg(summary.count);
             }
@@ -180,6 +169,12 @@ QString MassifAnalyzer::generateFunctionAllocationReport(const QMap<QString, Fun
 
         result += "\n";
     }
+
+    result += "📝 [Note] Lines are ignored if:\n"
+              "  - They refer to unnamed or unknown functions.\n"
+              "  - Their memory allocation is below a configured threshold (default: 1.00% of total memory).\n"
+              "  - They are structurally malformed or unsupported by the current parser.\n"
+              "  - They match known standard library or internal functions (e.g., `std::`, `__gnu_cxx::`, `boost::`, `operator new`, etc.).";
 
     return result;
 }
