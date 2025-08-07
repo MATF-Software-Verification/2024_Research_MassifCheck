@@ -117,6 +117,8 @@ valgrind --version
 
 💡 Make sure your Valgrind-executed binaries are accessible from WSL paths if running through Windows UI.
 
+---
+
 ## 🧪 Testing with Example Inputs
 
 The `./test/` directory contains several example C and C++ source files that you can use to test the application.
