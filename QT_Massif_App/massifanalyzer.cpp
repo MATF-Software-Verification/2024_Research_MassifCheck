@@ -151,8 +151,9 @@ QString MassifAnalyzer::generateFunctionAllocationReport(const QMap<QString, Fun
 
         // Warn if a function allocates a lot of memory
         if (summary.totalBytes > HIGH_MEMORY_THRESHOLD) {
-            result += QString("  ⚠️ [Warning] Function '%1' is responsible for a large memory allocation (over 100MB).\n")
-                .arg(summary.function);
+            result += QString("  ⚠️ [Warning] Function '%1' is responsible for a large memory allocation (over %2 MB).\n")
+                .arg(summary.function)
+                .arg(HIGH_MEMORY_THRESHOLD / BYTES_TO_MB);
         }
 
         if (summary.count > HIGH_ALLOCATION_COUNT) {
