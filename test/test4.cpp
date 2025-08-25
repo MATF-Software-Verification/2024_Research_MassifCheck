@@ -18,9 +18,6 @@ int main() {
 
     std::cout << "Finished allocations and frees. Check your massif snapshot now." << std::endl;
 
-    std::cout << "Press Enter to exit...";
-    std::cin.get();
-
 
     for (void* ptr : allocations) {
         if (ptr) free(ptr);
